@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
-import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
+  const { signIn } = useAuth();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -23,14 +22,11 @@ const Login: React.FC = () => {
     },
   });
 
-  const onSubmit = (data: { email: string; password: string }) => {
-    // Normally would validate with backend, but for now just check hardcoded credentials
-    if (data.email === "admin@aliancaestruturas.com.br" && data.password === "admin123") {
-      localStorage.setItem('isLoggedIn', 'true');
-      toast.success("Login realizado com sucesso!");
-      navigate('/admin/dashboard');
-    } else {
-      toast.error("Email ou senha incorretos");
+  const onSubmit = async (data: { email: string; password: string }) => {
+    try {
+      await signIn(data.email, data.password);
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
 
