@@ -12,6 +12,14 @@ import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 
+// Admin Routes
+import Login from "./pages/Login";
+import Dashboard from "./pages/admin/Dashboard";
+import ProjetosAdmin from "./pages/admin/Projetos";
+import Leads from "./pages/admin/Leads";
+import Orcamentos from "./pages/admin/Orcamentos";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -42,6 +50,30 @@ const App = () => (
               <Contato />
             </Layout>
           } />
+          
+          {/* Admin Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/projetos" element={
+            <ProtectedRoute>
+              <ProjetosAdmin />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/leads" element={
+            <ProtectedRoute>
+              <Leads />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/orcamentos" element={
+            <ProtectedRoute>
+              <Orcamentos />
+            </ProtectedRoute>
+          } />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -51,3 +83,4 @@ const App = () => (
 );
 
 export default App;
+
