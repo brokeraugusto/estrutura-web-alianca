@@ -8,18 +8,25 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export async function checkIfTableExists(tableName: string): Promise<boolean> {
   try {
-    // Query the information_schema directly instead of using an RPC function
-    // since there seems to be an issue with the RPC function
-    const { data, error } = await supabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public')
-      .eq('table_name', tableName)
-      .maybeSingle();
+    // Execute a more reliable query that works with Supabase's restrictions
+    const { data, error } = await supabase.rpc('check_table_exists', { table_name: tableName });
     
     if (error) {
+      // Se falhar o RPC, tentamos uma abordagem alternativa
       console.error('Erro ao verificar tabela:', error);
-      return false;
+      
+      // Como fallback, tentamos fazer um select para ver se a tabela existe
+      try {
+        // Usando any para contornar problemas de tipos com tabelas dinâmicas
+        const { count, error: countError } = await supabase
+          .from(tableName as any)
+          .select('*', { count: 'exact', head: true });
+          
+        // Se não der erro, a tabela existe
+        return !countError;
+      } catch {
+        return false;
+      }
     }
     
     return !!data;

@@ -10,19 +10,19 @@ import type { AppSettingsTable } from '@/types/supabase-rpc';
  */
 const appSettingsTable = {
   async getSettings(): Promise<{data: AppSettingsTable | null, error: any}> {
-    // Query directly with string literal to avoid type issues
-    return supabase.from('app_settings').select('*').maybeSingle();
+    // Type assertion é necessário porque a tabela pode não existir ainda no schema
+    return supabase.from('app_settings' as any).select('*').maybeSingle();
   },
   async updateSettings(settings: AppSettings): Promise<{data: any, error: any}> {
-    // Query directly with string literal to avoid type issues
-    return supabase.from('app_settings').update({
+    // Type assertion também necessário para atualização
+    return supabase.from('app_settings' as any).update({
       primaryColor: settings.primaryColor,
       secondaryColor: settings.secondaryColor,
       accentColor: settings.accentColor,
       font: settings.font,
       logoUrl: settings.logoUrl,
       faviconUrl: settings.faviconUrl
-    }).eq('id', 1);
+    } as any).eq('id', 1);
   }
 };
 

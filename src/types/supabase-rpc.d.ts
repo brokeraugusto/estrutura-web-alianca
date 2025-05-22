@@ -15,20 +15,15 @@ export interface AppSettingsTable {
 
 // Use proper module augmentation syntax
 declare module '@/integrations/supabase/types' {
-  // Extend the original Database type without redeclaring it
-  interface Database {
+  interface Database extends GeneratedDatabase {
     public: {
       Tables: {
         app_settings: {
           Row: AppSettingsTable;
           Insert: Partial<AppSettingsTable>;
           Update: Partial<AppSettingsTable>;
-        } & GeneratedDatabase['public']['Tables'];
+        };
       };
-      Views: GeneratedDatabase['public']['Views'];
-      Functions: GeneratedDatabase['public']['Functions'];
-      Enums: GeneratedDatabase['public']['Enums'];
-      CompositeTypes: GeneratedDatabase['public']['CompositeTypes'];
     }
   }
 }
