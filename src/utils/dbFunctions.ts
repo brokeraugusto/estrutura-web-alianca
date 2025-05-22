@@ -8,9 +8,14 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export async function checkIfTableExists(tableName: string): Promise<boolean> {
   try {
-    // Use a properly typed parameter object for the RPC call
+    // Query the information_schema directly instead of using an RPC function
+    // since there seems to be an issue with the RPC function
     const { data, error } = await supabase
-      .rpc<{ table_name: string }, boolean>('check_if_table_exists', { table_name: tableName });
+      .from('information_schema.tables')
+      .select('table_name')
+      .eq('table_schema', 'public')
+      .eq('table_name', tableName)
+      .maybeSingle();
     
     if (error) {
       console.error('Erro ao verificar tabela:', error);

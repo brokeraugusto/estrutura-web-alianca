@@ -23,13 +23,13 @@ declare module '@/integrations/supabase/types' {
           Row: AppSettingsTable;
           Insert: Partial<AppSettingsTable>;
           Update: Partial<AppSettingsTable>;
-        };
-      } & GeneratedDatabase['public']['Tables'];
+        } & GeneratedDatabase['public']['Tables'];
+      };
       Views: GeneratedDatabase['public']['Views'];
       Functions: GeneratedDatabase['public']['Functions'];
       Enums: GeneratedDatabase['public']['Enums'];
       CompositeTypes: GeneratedDatabase['public']['CompositeTypes'];
-    };
+    }
   }
 }
 
