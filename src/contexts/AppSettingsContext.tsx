@@ -55,22 +55,19 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     
     // Depois tenta buscar do banco de dados (versão mais atualizada)
     try {
-      // Usando uma abordagem mais segura para verificar se a tabela existe
-      // Usamos uma query SQL genérica que funcionará independentemente das tabelas existentes
-      const { data: hasTable, error: checkError } = await supabase
-        .rpc('check_if_table_exists', { table_name: 'app_settings' })
-        .single();
+      // Verificar se a tabela app_settings existe usando função genérica
+      const { data, error } = await supabase
+        .rpc('check_if_table_exists', { table_name: 'app_settings' });
       
-      if (checkError) {
-        console.error('Erro ao verificar tabela:', checkError);
+      if (error) {
+        console.error('Erro ao verificar tabela:', error);
         return;
       }
       
-      if (hasTable) {
-        // A tabela existe, buscar os dados usando query() com o parâmetro 'any'
-        // Isso evita problemas de tipagem com Supabase
+      if (data) {
+        // A tabela existe, buscar os dados de forma segura
         const { data: settingsData, error: fetchError } = await supabase
-          .from('app_settings' as any)
+          .from('app_settings')
           .select('*')
           .maybeSingle();
         
@@ -108,18 +105,17 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       localStorage.setItem('appSettings', JSON.stringify(newSettings));
       
       // Verificar se a tabela app_settings existe
-      const { data: hasTable, error: checkError } = await supabase
-        .rpc('check_if_table_exists', { table_name: 'app_settings' })
-        .single();
+      const { data, error } = await supabase
+        .rpc('check_if_table_exists', { table_name: 'app_settings' });
       
-      if (checkError) {
-        throw checkError;
+      if (error) {
+        throw error;
       }
       
-      if (hasTable) {
-        // Se a tabela existir, atualiza usando `from` com o tipo 'any'
+      if (data) {
+        // Se a tabela existir, atualiza
         const updateResult = await supabase
-          .from('app_settings' as any)
+          .from('app_settings')
           .update(newSettings)
           .eq('id', 1);
           

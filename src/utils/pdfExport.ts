@@ -1,5 +1,5 @@
 
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { BudgetRequest } from '@/components/admin/budget/BudgetRequestList';
 import { formatCurrency, formatDate, formatStatus, formatProjectType } from '@/lib/formatters';
