@@ -13,8 +13,9 @@ export interface AppSettingsTable {
   faviconUrl?: string | null;
 }
 
-// Use module augmentation to extend the existing Database type
+// Use proper module augmentation syntax
 declare module '@/integrations/supabase/types' {
+  // Extend the original Database type without redeclaring it
   interface Database {
     public: {
       Tables: {
