@@ -1,7 +1,18 @@
 
+// This file safely extends the Supabase types without modifying the generated types
+
 import { SupabaseClient } from '@supabase/supabase-js';
-import type { Database as SupabaseDatabase } from '@/integrations/supabase/types';
-import type { AppSettings } from '@/types/appSettings';
+
+// Define how app_settings interface without extending the Database type directly
+export interface AppSettingsRow {
+  id: number;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  font: string;
+  logoUrl?: string | null;
+  faviconUrl?: string | null;
+}
 
 // Extend the SupabaseClient RPC typing
 declare module '@supabase/supabase-js' {
@@ -11,54 +22,13 @@ declare module '@supabase/supabase-js' {
       ? 'public'
       : string & keyof Database,
   > {
-    rpc<Args extends Record<string, unknown> = Record<string, unknown>>(
+    rpc<Args extends Record<string, unknown> = Record<string, unknown>, ReturnType = any>(
       fn: string,
       params?: Args,
       options?: {
         head?: boolean;
         count?: null | 'exact' | 'planned' | 'estimated';
       }
-    ): import('@supabase/supabase-js').PostgrestFilterBuilder<any, any, any>;
-  }
-}
-
-// Instead of trying to extend the Database type directly, we'll use module augmentation
-// to add the app_settings table type to the existing Database type
-declare module '@/integrations/supabase/types' {
-  interface Database {
-    public: {
-      Tables: {
-        app_settings: {
-          Row: {
-            id: number;
-            primaryColor: string;
-            secondaryColor: string;
-            accentColor: string;
-            font: string;
-            logoUrl: string | null;
-            faviconUrl: string | null;
-          };
-          Insert: {
-            id?: number;
-            primaryColor: string;
-            secondaryColor: string;
-            accentColor: string;
-            font: string;
-            logoUrl?: string | null;
-            faviconUrl?: string | null;
-          };
-          Update: {
-            id?: number;
-            primaryColor?: string;
-            secondaryColor?: string;
-            accentColor?: string;
-            font?: string;
-            logoUrl?: string | null;
-            faviconUrl?: string | null;
-          };
-          Relationships: [];
-        };
-      };
-    };
+    ): import('@supabase/supabase-js').PostgrestFilterBuilder<any, ReturnType, any>;
   }
 }

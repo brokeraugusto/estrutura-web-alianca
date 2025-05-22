@@ -30,7 +30,10 @@ export async function checkIfTableExists(tableName: string): Promise<boolean> {
  * @param {Record<string, unknown>} params - Parameters for the RPC function
  * @returns {Promise<{data: any, error: any}>}
  */
-export async function callRpcFunction(fnName: string, params: Record<string, unknown>) {
+export async function callRpcFunction<T = any>(
+  fnName: string, 
+  params: Record<string, unknown>
+): Promise<{data: T | null, error: any}> {
   try {
     const { data, error } = await supabase.rpc(fnName, params);
     return { data, error };

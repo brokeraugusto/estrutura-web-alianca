@@ -3,6 +3,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { AppSettings, defaultSettings } from '@/types/appSettings';
 import { checkIfTableExists } from '@/utils/dbFunctions';
 
+/**
+ * Create a type-safe wrapper for app_settings table operations
+ * This avoids direct reliance on database types
+ */
+const appSettingsTable = {
+  async getSettings(): Promise<{data: any, error: any}> {
+    return supabase.from('app_settings').select('*').maybeSingle();
+  },
+  async updateSettings(settings: AppSettings): Promise<{data: any, error: any}> {
+    return supabase.from('app_settings').update({
+      primaryColor: settings.primaryColor,
+      secondaryColor: settings.secondaryColor,
+      accentColor: settings.accentColor,
+      font: settings.font,
+      logoUrl: settings.logoUrl,
+      faviconUrl: settings.faviconUrl
+    }).eq('id', 1);
+  }
+};
+
 export async function loadAppSettings(): Promise<AppSettings> {
   // First try to load from localStorage
   const savedSettings = localStorage.getItem('appSettings');
@@ -21,11 +41,8 @@ export async function loadAppSettings(): Promise<AppSettings> {
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
-      // The table exists, safely fetch the data with proper typing
-      const { data: settingsData, error: fetchError } = await supabase
-        .from('app_settings')
-        .select('*')
-        .maybeSingle();
+      // The table exists, safely fetch the data with type-safe wrapper
+      const { data: settingsData, error: fetchError } = await appSettingsTable.getSettings();
       
       if (fetchError) {
         console.error('Erro ao buscar configurações:', fetchError);
@@ -65,11 +82,7 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
-      const updateResult = await supabase
-        .from('app_settings')
-        .update(newSettings)
-        .eq('id', 1);
-        
+      const updateResult = await appSettingsTable.updateSettings(newSettings);
       if (updateResult.error) throw updateResult.error;
     }
     
