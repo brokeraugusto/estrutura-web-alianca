@@ -8,9 +8,9 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export async function checkIfTableExists(tableName: string): Promise<boolean> {
   try {
-    // Fix the RPC call by using a Record<string, unknown> type
+    // Use a properly typed parameter object for the RPC call
     const { data, error } = await supabase
-      .rpc('check_if_table_exists', { table_name: tableName } as Record<string, unknown>);
+      .rpc('check_if_table_exists', { table_name: tableName });
     
     if (error) {
       console.error('Erro ao verificar tabela:', error);

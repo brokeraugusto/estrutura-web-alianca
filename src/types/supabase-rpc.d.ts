@@ -1,5 +1,7 @@
 
 import { SupabaseClient } from '@supabase/supabase-js';
+import type { Database as SupabaseDatabase } from '@/integrations/supabase/types';
+import type { AppSettings } from '@/types/appSettings';
 
 // Extend the SupabaseClient RPC typing
 declare module '@supabase/supabase-js' {
@@ -20,31 +22,43 @@ declare module '@supabase/supabase-js' {
   }
 }
 
-// Type for app_settings table (since it's not in the auto-generated types)
-declare global {
-  interface AppSettings {
-    id?: number;
-    primaryColor: string;
-    secondaryColor: string;
-    accentColor: string;
-    font: string;
-    logoUrl?: string;
-    faviconUrl?: string;
-  }
-}
-
-// Add app_settings type to the Database type in a way that doesn't create duplicate identifiers
+// Instead of trying to extend the Database type directly, we'll use module augmentation
+// to add the app_settings table type to the existing Database type
 declare module '@/integrations/supabase/types' {
   interface Database {
     public: {
       Tables: {
         app_settings: {
-          Row: AppSettings;
-          Insert: Omit<AppSettings, 'id'>;
-          Update: Partial<AppSettings>;
-          Relationships: never[];
-        }
-      } & Database['public']['Tables'];
+          Row: {
+            id: number;
+            primaryColor: string;
+            secondaryColor: string;
+            accentColor: string;
+            font: string;
+            logoUrl: string | null;
+            faviconUrl: string | null;
+          };
+          Insert: {
+            id?: number;
+            primaryColor: string;
+            secondaryColor: string;
+            accentColor: string;
+            font: string;
+            logoUrl?: string | null;
+            faviconUrl?: string | null;
+          };
+          Update: {
+            id?: number;
+            primaryColor?: string;
+            secondaryColor?: string;
+            accentColor?: string;
+            font?: string;
+            logoUrl?: string | null;
+            faviconUrl?: string | null;
+          };
+          Relationships: [];
+        };
+      };
     };
   }
 }

@@ -21,10 +21,9 @@ export async function loadAppSettings(): Promise<AppSettings> {
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
-      // The table exists, safely fetch the data
-      // Using type assertion to bypass TypeScript's strict checking
+      // The table exists, safely fetch the data with proper typing
       const { data: settingsData, error: fetchError } = await supabase
-        .from('app_settings' as any)
+        .from('app_settings')
         .select('*')
         .maybeSingle();
       
@@ -34,14 +33,14 @@ export async function loadAppSettings(): Promise<AppSettings> {
       }
       
       if (settingsData) {
-        // Ensure data is in the correct format
+        // Map database fields to AppSettings
         const dbSettings: AppSettings = {
-          primaryColor: (settingsData as any).primaryColor || defaultSettings.primaryColor,
-          secondaryColor: (settingsData as any).secondaryColor || defaultSettings.secondaryColor,
-          accentColor: (settingsData as any).accentColor || defaultSettings.accentColor,
-          font: (settingsData as any).font || defaultSettings.font,
-          logoUrl: (settingsData as any).logoUrl || defaultSettings.logoUrl,
-          faviconUrl: (settingsData as any).faviconUrl || defaultSettings.faviconUrl,
+          primaryColor: settingsData.primaryColor || defaultSettings.primaryColor,
+          secondaryColor: settingsData.secondaryColor || defaultSettings.secondaryColor,
+          accentColor: settingsData.accentColor || defaultSettings.accentColor,
+          font: settingsData.font || defaultSettings.font,
+          logoUrl: settingsData.logoUrl || defaultSettings.logoUrl,
+          faviconUrl: settingsData.faviconUrl || defaultSettings.faviconUrl,
         };
         
         localStorage.setItem('appSettings', JSON.stringify(dbSettings));
@@ -66,9 +65,8 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
-      // Using type assertion to bypass TypeScript's strict checking
       const updateResult = await supabase
-        .from('app_settings' as any)
+        .from('app_settings')
         .update(newSettings)
         .eq('id', 1);
         
@@ -93,11 +91,12 @@ export async function uploadMedia(file: File, folder: 'logos' | 'favicons'): Pro
       
     if (uploadError) throw uploadError;
     
-    // Manually build URL to avoid type dependencies
-    const storageUrl = process.env.SUPABASE_URL || '';
-    const url = `${storageUrl}/storage/v1/object/public/media/${folder}/${fileName}`;
+    // Get the public URL for the uploaded file
+    const { data } = supabase.storage
+      .from('media')
+      .getPublicUrl(`${folder}/${fileName}`);
     
-    return url;
+    return data.publicUrl;
   } catch (error) {
     console.error(`Erro ao fazer upload do ${folder === 'logos' ? 'logo' : 'favicon'}:`, error);
     return null;
