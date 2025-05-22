@@ -1,4 +1,4 @@
-import { Database } from '@/integrations/supabase/types';
+
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // Extend the SupabaseClient RPC typing
@@ -33,17 +33,12 @@ declare global {
   }
 }
 
-// Extend the Supabase Database type to include our custom tables
+// Instead of extending Database directly, we create a type augmentation
+// for the app_settings table specifically
 declare module '@/integrations/supabase/types' {
   interface Database {
     public: {
       Tables: {
-        // Keep existing tables
-        budget_requests: any;
-        leads: any;
-        profiles: any;
-        projects: any;
-        // Add app_settings
         app_settings: {
           Row: AppSettings;
           Insert: Omit<AppSettings, 'id'>;
