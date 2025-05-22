@@ -2,10 +2,15 @@
 import { supabase } from '@/integrations/supabase/client';
 import { AppSettings, AppSettingsData, defaultSettings } from '@/types/appSettings';
 
+// Helper type for the RPC call
+interface CheckTableExistsParams {
+  table_name: string;
+}
+
 export async function checkIfTableExists(tableName: string): Promise<boolean> {
   try {
     const { data, error } = await supabase
-      .rpc('check_if_table_exists', { table_name: tableName } as any);
+      .rpc('check_if_table_exists', { table_name: tableName } as CheckTableExistsParams);
     
     if (error) {
       console.error('Erro ao verificar tabela:', error);
@@ -38,6 +43,7 @@ export async function loadAppSettings(): Promise<AppSettings> {
     
     if (tableExists) {
       // The table exists, safely fetch the data
+      // Using type assertion to bypass TypeScript's strict checking
       const { data: settingsData, error: fetchError } = await supabase
         .from('app_settings' as any)
         .select('*')
@@ -81,6 +87,7 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
+      // Using type assertion to bypass TypeScript's strict checking
       const updateResult = await supabase
         .from('app_settings' as any)
         .update(newSettings)

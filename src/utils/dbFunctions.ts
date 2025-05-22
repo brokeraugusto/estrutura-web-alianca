@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 /**
@@ -22,3 +21,12 @@ export async function checkIfTableExists(tableName: string): Promise<boolean> {
     return false;
   }
 }
+
+// Add a type helper for RPC calls similar to what we did in appSettingsService
+interface RpcParams {
+  [key: string]: any;
+}
+
+// Update any RPC calls in this file with the proper type casting
+// For example:
+// const { data, error } = await supabase.rpc('your_function_name', params as RpcParams);
