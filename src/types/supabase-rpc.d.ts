@@ -33,19 +33,13 @@ declare global {
   }
 }
 
-// Use module augmentation for the app_settings table
-// This avoids the duplicate Database identifier error
+// Use module augmentation for the app_settings table instead of redeclaring Database
 declare module '@/integrations/supabase/types' {
-  interface Database {
-    public: {
-      Tables: {
-        app_settings: {
-          Row: AppSettings;
-          Insert: Omit<AppSettings, 'id'>;
-          Update: Partial<AppSettings>;
-          Relationships: [];
-        };
-      };
-    };
+  interface Tables {
+    app_settings: {
+      Row: AppSettings;
+      Insert: Omit<AppSettings, 'id'>;
+      Update: Partial<AppSettings>;
+    }
   }
 }

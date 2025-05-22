@@ -1,24 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { AppSettings, AppSettingsData, defaultSettings } from '@/types/appSettings';
-
-export async function checkIfTableExists(tableName: string): Promise<boolean> {
-  try {
-    // Fix the RPC call by using a Record<string, unknown> type
-    const { data, error } = await supabase
-      .rpc('check_if_table_exists', { table_name: tableName } as Record<string, unknown>);
-    
-    if (error) {
-      console.error('Erro ao verificar tabela:', error);
-      return false;
-    }
-    
-    return !!data;
-  } catch (error) {
-    console.error('Erro ao verificar tabela:', error);
-    return false;
-  }
-}
+import { AppSettings, defaultSettings } from '@/types/appSettings';
+import { checkIfTableExists } from '@/utils/dbFunctions';
 
 export async function loadAppSettings(): Promise<AppSettings> {
   // First try to load from localStorage
