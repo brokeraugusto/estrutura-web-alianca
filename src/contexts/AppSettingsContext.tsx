@@ -29,6 +29,17 @@ interface AppSettingsContextType {
   uploading: boolean;
 }
 
+// Define a type for the app_settings table data
+interface AppSettingsData {
+  id: number;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  font: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+}
+
 const AppSettingsContext = createContext<AppSettingsContextType | undefined>(undefined);
 
 export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -65,7 +76,7 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
       
       if (data) {
-        // A tabela existe, buscar os dados de forma segura usando type assertion
+        // A tabela existe, buscar os dados de forma segura
         const { data: settingsData, error: fetchError } = await supabase
           .from('app_settings' as any)
           .select('*')
@@ -77,14 +88,14 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
         
         if (settingsData) {
-          // Garantir que os dados estão no formato correto
+          // Tratar os dados como tipagem AppSettingsData
           const dbSettings: AppSettings = {
-            primaryColor: settingsData.primaryColor || defaultSettings.primaryColor,
-            secondaryColor: settingsData.secondaryColor || defaultSettings.secondaryColor,
-            accentColor: settingsData.accentColor || defaultSettings.accentColor,
-            font: settingsData.font || defaultSettings.font,
-            logoUrl: settingsData.logoUrl || defaultSettings.logoUrl,
-            faviconUrl: settingsData.faviconUrl || defaultSettings.faviconUrl,
+            primaryColor: (settingsData as unknown as AppSettingsData).primaryColor || defaultSettings.primaryColor,
+            secondaryColor: (settingsData as unknown as AppSettingsData).secondaryColor || defaultSettings.secondaryColor,
+            accentColor: (settingsData as unknown as AppSettingsData).accentColor || defaultSettings.accentColor,
+            font: (settingsData as unknown as AppSettingsData).font || defaultSettings.font,
+            logoUrl: (settingsData as unknown as AppSettingsData).logoUrl || defaultSettings.logoUrl,
+            faviconUrl: (settingsData as unknown as AppSettingsData).faviconUrl || defaultSettings.faviconUrl,
           };
           
           setSettings(dbSettings);
@@ -113,7 +124,7 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
       
       if (data) {
-        // Se a tabela existir, atualiza usando type assertion
+        // Se a tabela existir, atualiza
         const updateResult = await supabase
           .from('app_settings' as any)
           .update(newSettings)
