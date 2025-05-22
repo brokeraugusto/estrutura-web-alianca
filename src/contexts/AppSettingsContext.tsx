@@ -29,31 +29,46 @@ interface AppSettingsContextType {
 
 const AppSettingsContext = createContext<AppSettingsContextType | undefined>(undefined);
 
+const APP_SETTINGS_KEY = 'app_settings';
+
 export function AppSettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Carregar configurações do banco de dados
+  // Load settings from localStorage or database
   useEffect(() => {
     async function loadSettings() {
       try {
-        const { data, error } = await supabase
-          .from('app_settings')
-          .select('*')
-          .single();
-        
-        if (error) {
-          console.error('Error loading app settings:', error);
+        // First, try to get from localStorage
+        const localSettings = localStorage.getItem(APP_SETTINGS_KEY);
+        if (localSettings) {
+          const parsedSettings = JSON.parse(localSettings) as AppSettings;
+          setSettings({...defaultSettings, ...parsedSettings});
+          applySettings(parsedSettings);
+          setLoading(false);
           return;
         }
-        
-        if (data) {
-          setSettings({
-            ...defaultSettings,
-            ...data,
-          });
-          applySettings(data);
+
+        // Then try to fetch from database
+        try {
+          // Check if the table exists by running a query with maybeSingle instead of single
+          const { data, error } = await supabase
+            .from('app_settings')
+            .select('*')
+            .maybeSingle();
+          
+          if (data) {
+            const appSettings = data as unknown as AppSettings;
+            setSettings({
+              ...defaultSettings,
+              ...appSettings,
+            });
+            applySettings(appSettings);
+          }
+        } catch (dbError) {
+          console.error('Database error loading app settings:', dbError);
+          // Fallback to default settings if database not available
         }
       } catch (error) {
         console.error('Failed to load settings:', error);
@@ -70,31 +85,49 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
     try {
       const updatedSettings = { ...settings, ...newSettings };
       
-      // Verificar se existem configurações no banco
-      const { data: existingSettings } = await supabase
-        .from('app_settings')
-        .select('*')
-        .maybeSingle();
+      // Save to localStorage for now
+      localStorage.setItem(APP_SETTINGS_KEY, JSON.stringify(updatedSettings));
       
-      let error;
-      
-      if (existingSettings) {
-        const { error: updateError } = await supabase
+      // Try to save to database if it's available
+      try {
+        // Check if the table exists
+        const { count, error: countError } = await supabase
           .from('app_settings')
-          .update(updatedSettings)
-          .eq('id', existingSettings.id);
+          .select('*', { count: 'exact', head: true });
+        
+        if (countError) {
+          throw countError;
+        }
+        
+        if (count === 0) {
+          // No records, try to insert
+          const { error: insertError } = await supabase
+            .from('app_settings')
+            .insert([updatedSettings as any]);
           
-        error = updateError;
-      } else {
-        const { error: insertError } = await supabase
-          .from('app_settings')
-          .insert([updatedSettings]);
+          if (insertError) throw insertError;
+        } else {
+          // Update existing record
+          // Assume the first record is the one we want to update
+          const { data: existingSettings, error: fetchError } = await supabase
+            .from('app_settings')
+            .select('id')
+            .limit(1)
+            .single();
           
-        error = insertError;
-      }
-      
-      if (error) {
-        throw error;
+          if (fetchError) throw fetchError;
+          
+          if (existingSettings && existingSettings.id) {
+            const { error: updateError } = await supabase
+              .from('app_settings')
+              .update(updatedSettings as any)
+              .eq('id', existingSettings.id);
+            
+            if (updateError) throw updateError;
+          }
+        }
+      } catch (dbError) {
+        console.warn('Could not save to database, continuing with localStorage only:', dbError);
       }
       
       setSettings(updatedSettings);
@@ -109,13 +142,13 @@ export function AppSettingsProvider({ children }: { children: React.ReactNode })
   };
 
   const applySettings = (settingsToApply: AppSettings = settings) => {
-    // Aplicar as configurações ao CSS
+    // Apply settings to CSS
     document.documentElement.style.setProperty('--color-primary', settingsToApply.primaryColor);
     document.documentElement.style.setProperty('--color-secondary', settingsToApply.secondaryColor);
     document.documentElement.style.setProperty('--color-accent', settingsToApply.accentColor);
     document.documentElement.style.setProperty('--font-family', settingsToApply.font);
     
-    // Atualizar favicon se fornecido
+    // Update favicon if provided
     if (settingsToApply.favicon) {
       const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
       link.setAttribute('rel', 'shortcut icon');

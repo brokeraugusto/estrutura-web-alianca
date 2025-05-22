@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, FilePdf } from 'lucide-react';
+import { FileText, Loader2, FileDown } from 'lucide-react';
 import { formatCurrency, formatDate, formatStatus, formatProjectType } from '@/lib/formatters';
 import { exportBudgetToPDF } from '@/utils/pdfExport';
 
@@ -110,7 +110,7 @@ export const BudgetRequestList: React.FC<BudgetRequestListProps> = ({
                       title="Baixar PDF"
                       onClick={(e) => handleExportPDF(request, e)}
                     >
-                      <FilePdf className="h-4 w-4" />
+                      <FileDown className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>

@@ -9,7 +9,7 @@ import { BudgetFilters } from '@/components/admin/budget/BudgetFilters';
 import { BudgetRequestDetail } from '@/components/admin/budget/BudgetRequestDetail';
 import { useBudgetRequests } from '@/hooks/useBudgetRequests';
 import { exportBudgetListToPDF } from '@/utils/pdfExport';
-import { FilePdf } from 'lucide-react';
+import { FileDown } from 'lucide-react';
 
 const Orcamentos: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -64,7 +64,7 @@ const Orcamentos: React.FC = () => {
             className="flex items-center gap-2"
             onClick={handleExportAllToPDF}
           >
-            <FilePdf className="h-4 w-4" />
+            <FileDown className="h-4 w-4" />
             Exportar PDF
           </Button>
           
