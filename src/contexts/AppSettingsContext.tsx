@@ -57,7 +57,7 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     try {
       // Verificar se a tabela app_settings existe usando função genérica
       const { data, error } = await supabase
-        .rpc('check_if_table_exists', { table_name: 'app_settings' });
+        .rpc('check_if_table_exists', { table_name: 'app_settings' } as any);
       
       if (error) {
         console.error('Erro ao verificar tabela:', error);
@@ -65,9 +65,9 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
       
       if (data) {
-        // A tabela existe, buscar os dados de forma segura
+        // A tabela existe, buscar os dados de forma segura usando type assertion
         const { data: settingsData, error: fetchError } = await supabase
-          .from('app_settings')
+          .from('app_settings' as any)
           .select('*')
           .maybeSingle();
         
@@ -106,16 +106,16 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       
       // Verificar se a tabela app_settings existe
       const { data, error } = await supabase
-        .rpc('check_if_table_exists', { table_name: 'app_settings' });
+        .rpc('check_if_table_exists', { table_name: 'app_settings' } as any);
       
       if (error) {
         throw error;
       }
       
       if (data) {
-        // Se a tabela existir, atualiza
+        // Se a tabela existir, atualiza usando type assertion
         const updateResult = await supabase
-          .from('app_settings')
+          .from('app_settings' as any)
           .update(newSettings)
           .eq('id', 1);
           
