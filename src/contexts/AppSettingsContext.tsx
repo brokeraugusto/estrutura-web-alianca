@@ -55,24 +55,41 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     
     // Depois tenta buscar do banco de dados (versão mais atualizada)
     try {
-      // Usando RPC customizada ou query genérica para verificar se a tabela existe
-      // sem depender de tipos específicos do banco de dados
-      const { data, error } = await supabase.rpc('check_if_table_exists', { table_name: 'app_settings' });
-      const tableExists = data || false;
+      // Usando uma abordagem mais segura para verificar se a tabela existe
+      // Usamos uma query SQL genérica que funcionará independentemente das tabelas existentes
+      const { data: hasTable, error: checkError } = await supabase
+        .rpc('check_if_table_exists', { table_name: 'app_settings' })
+        .single();
       
-      if (tableExists && !error) {
-        // A tabela existe, buscar dados usando query() para evitar tipagem estrita
+      if (checkError) {
+        console.error('Erro ao verificar tabela:', checkError);
+        return;
+      }
+      
+      if (hasTable) {
+        // A tabela existe, buscar os dados usando query() com o parâmetro 'any'
+        // Isso evita problemas de tipagem com Supabase
         const { data: settingsData, error: fetchError } = await supabase
-          .from('app_settings')
+          .from('app_settings' as any)
           .select('*')
           .maybeSingle();
         
         if (fetchError) {
-          throw fetchError;
+          console.error('Erro ao buscar configurações:', fetchError);
+          return;
         }
         
         if (settingsData) {
-          const dbSettings = settingsData as unknown as AppSettings;
+          // Garantir que os dados estão no formato correto
+          const dbSettings: AppSettings = {
+            primaryColor: settingsData.primaryColor || defaultSettings.primaryColor,
+            secondaryColor: settingsData.secondaryColor || defaultSettings.secondaryColor,
+            accentColor: settingsData.accentColor || defaultSettings.accentColor,
+            font: settingsData.font || defaultSettings.font,
+            logoUrl: settingsData.logoUrl || defaultSettings.logoUrl,
+            faviconUrl: settingsData.faviconUrl || defaultSettings.faviconUrl,
+          };
+          
           setSettings(dbSettings);
           localStorage.setItem('appSettings', JSON.stringify(dbSettings));
         }
@@ -91,14 +108,19 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       localStorage.setItem('appSettings', JSON.stringify(newSettings));
       
       // Verificar se a tabela app_settings existe
-      const { data, error } = await supabase.rpc('check_if_table_exists', { table_name: 'app_settings' });
-      const tableExists = data || false;
+      const { data: hasTable, error: checkError } = await supabase
+        .rpc('check_if_table_exists', { table_name: 'app_settings' })
+        .single();
       
-      if (tableExists && !error) {
-        // Se a tabela existir, atualiza usando query() para evitar tipagem estrita
+      if (checkError) {
+        throw checkError;
+      }
+      
+      if (hasTable) {
+        // Se a tabela existir, atualiza usando `from` com o tipo 'any'
         const updateResult = await supabase
-          .from('app_settings')
-          .update(newSettings as any)
+          .from('app_settings' as any)
+          .update(newSettings)
           .eq('id', 1);
           
         if (updateResult.error) throw updateResult.error;
