@@ -33,8 +33,8 @@ declare global {
   }
 }
 
-// Instead of extending Database directly, we create a type augmentation
-// for the app_settings table specifically
+// Use module augmentation for the app_settings table
+// This avoids the duplicate Database identifier error
 declare module '@/integrations/supabase/types' {
   interface Database {
     public: {
