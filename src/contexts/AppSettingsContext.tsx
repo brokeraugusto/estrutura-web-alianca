@@ -55,31 +55,29 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     
     // Depois tenta buscar do banco de dados (versão mais atualizada)
     try {
-      // Tenta verificar se a tabela app_settings existe
-      const { error: tableCheckError } = await supabase
-        .from('app_settings')
-        .select('*')
-        .limit(1)
-        .single();
+      // Usando RPC customizada ou query genérica para verificar se a tabela existe
+      // sem depender de tipos específicos do banco de dados
+      const { data, error } = await supabase.rpc('check_if_table_exists', { table_name: 'app_settings' });
+      const tableExists = data || false;
       
-      if (!tableCheckError) {
-        // A tabela existe, pode buscar os dados
-        const { data, error } = await supabase
+      if (tableExists && !error) {
+        // A tabela existe, buscar dados usando query() para evitar tipagem estrita
+        const { data: settingsData, error: fetchError } = await supabase
           .from('app_settings')
           .select('*')
-          .single();
+          .maybeSingle();
         
-        if (error) {
-          throw error;
+        if (fetchError) {
+          throw fetchError;
         }
         
-        if (data) {
-          const dbSettings = data as unknown as AppSettings;
+        if (settingsData) {
+          const dbSettings = settingsData as unknown as AppSettings;
           setSettings(dbSettings);
           localStorage.setItem('appSettings', JSON.stringify(dbSettings));
         }
       } else {
-        // A tabela não existe, usamos apenas as configurações padrão ou do localStorage
+        // A tabela não existe, usando apenas as configurações padrão ou do localStorage
         console.log('Tabela app_settings não encontrada, usando configurações padrão');
       }
     } catch (error) {
@@ -92,21 +90,18 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setSettings(newSettings);
       localStorage.setItem('appSettings', JSON.stringify(newSettings));
       
-      // Verifica se a tabela existe
-      const { error: tableCheckError } = await supabase
-        .from('app_settings')
-        .select('*')
-        .limit(1)
-        .single();
+      // Verificar se a tabela app_settings existe
+      const { data, error } = await supabase.rpc('check_if_table_exists', { table_name: 'app_settings' });
+      const tableExists = data || false;
       
-      if (!tableCheckError) {
-        // Se a tabela existir, atualiza
-        const { error } = await supabase
+      if (tableExists && !error) {
+        // Se a tabela existir, atualiza usando query() para evitar tipagem estrita
+        const updateResult = await supabase
           .from('app_settings')
-          .update(newSettings)
+          .update(newSettings as any)
           .eq('id', 1);
           
-        if (error) throw error;
+        if (updateResult.error) throw updateResult.error;
       }
       
       toast({
@@ -135,7 +130,9 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         
       if (uploadError) throw uploadError;
       
-      const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/logos/${fileName}`;
+      // Construindo a URL manualmente para evitar dependências de tipos
+      const storageUrl = process.env.SUPABASE_URL || '';
+      const url = `${storageUrl}/storage/v1/object/public/media/logos/${fileName}`;
       
       updateSettings({ ...settings, logoUrl: url });
       
@@ -167,7 +164,9 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         
       if (uploadError) throw uploadError;
       
-      const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/favicons/${fileName}`;
+      // Construindo a URL manualmente para evitar dependências de tipos
+      const storageUrl = process.env.SUPABASE_URL || '';
+      const url = `${storageUrl}/storage/v1/object/public/media/favicons/${fileName}`;
       
       updateSettings({ ...settings, faviconUrl: url });
       
