@@ -1,176 +1,220 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from './AuthContext';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export interface AppSettings {
   primaryColor: string;
   secondaryColor: string;
   accentColor: string;
   font: string;
-  logo?: string;
-  favicon?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
 }
 
 const defaultSettings: AppSettings = {
-  primaryColor: '#153957', // blueDark
-  secondaryColor: '#ffffff', // white
-  accentColor: '#FF6B35', // orangeAccent
-  font: 'Inter, sans-serif'
+  primaryColor: '#15394f', // blueDark
+  secondaryColor: '#ef4444', // red
+  accentColor: '#3b82f6', // blue
+  font: 'font-body',
+  logoUrl: '/logo.svg',
+  faviconUrl: '/favicon.ico'
 };
 
 interface AppSettingsContextType {
   settings: AppSettings;
-  updateSettings: (newSettings: Partial<AppSettings>) => Promise<void>;
-  loading: boolean;
-  applySettings: (settings?: AppSettings) => void;
+  updateSettings: (newSettings: AppSettings) => void;
+  uploadLogo: (file: File) => void;
+  uploadFavicon: (file: File) => void;
+  uploading: boolean;
 }
 
 const AppSettingsContext = createContext<AppSettingsContextType | undefined>(undefined);
 
-const APP_SETTINGS_KEY = 'app_settings';
-
-export function AppSettingsProvider({ children }: { children: React.ReactNode }) {
+export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
 
-  // Load settings from localStorage or database
+  // Carrega as configurações iniciais
   useEffect(() => {
-    async function loadSettings() {
-      try {
-        // First, try to get from localStorage
-        const localSettings = localStorage.getItem(APP_SETTINGS_KEY);
-        if (localSettings) {
-          const parsedSettings = JSON.parse(localSettings) as AppSettings;
-          setSettings({...defaultSettings, ...parsedSettings});
-          applySettings(parsedSettings);
-          setLoading(false);
-          return;
-        }
-
-        // Then try to fetch from database
-        try {
-          // Check if the table exists by running a query with maybeSingle instead of single
-          const { data, error } = await supabase
-            .from('app_settings')
-            .select('*')
-            .maybeSingle();
-          
-          if (data) {
-            const appSettings = data as unknown as AppSettings;
-            setSettings({
-              ...defaultSettings,
-              ...appSettings,
-            });
-            applySettings(appSettings);
-          }
-        } catch (dbError) {
-          console.error('Database error loading app settings:', dbError);
-          // Fallback to default settings if database not available
-        }
-      } catch (error) {
-        console.error('Failed to load settings:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
     loadSettings();
   }, []);
-
-  const updateSettings = async (newSettings: Partial<AppSettings>) => {
-    setLoading(true);
-    try {
-      const updatedSettings = { ...settings, ...newSettings };
-      
-      // Save to localStorage for now
-      localStorage.setItem(APP_SETTINGS_KEY, JSON.stringify(updatedSettings));
-      
-      // Try to save to database if it's available
+  
+  // Primeiro tenta carregar do localStorage (para uso imediato)
+  const loadSettings = async () => {
+    const savedSettings = localStorage.getItem('appSettings');
+    
+    if (savedSettings) {
       try {
-        // Check if the table exists
-        const { count, error: countError } = await supabase
+        setSettings(JSON.parse(savedSettings));
+      } catch (error) {
+        console.error('Erro ao carregar configurações do localStorage:', error);
+      }
+    }
+    
+    // Depois tenta buscar do banco de dados (versão mais atualizada)
+    try {
+      // Tenta verificar se a tabela app_settings existe
+      const { error: tableCheckError } = await supabase
+        .from('app_settings')
+        .select('*')
+        .limit(1)
+        .single();
+      
+      if (!tableCheckError) {
+        // A tabela existe, pode buscar os dados
+        const { data, error } = await supabase
           .from('app_settings')
-          .select('*', { count: 'exact', head: true });
+          .select('*')
+          .single();
         
-        if (countError) {
-          throw countError;
+        if (error) {
+          throw error;
         }
         
-        if (count === 0) {
-          // No records, try to insert
-          const { error: insertError } = await supabase
-            .from('app_settings')
-            .insert([updatedSettings as any]);
-          
-          if (insertError) throw insertError;
-        } else {
-          // Update existing record
-          // Assume the first record is the one we want to update
-          const { data: existingSettings, error: fetchError } = await supabase
-            .from('app_settings')
-            .select('id')
-            .limit(1)
-            .single();
-          
-          if (fetchError) throw fetchError;
-          
-          if (existingSettings && existingSettings.id) {
-            const { error: updateError } = await supabase
-              .from('app_settings')
-              .update(updatedSettings as any)
-              .eq('id', existingSettings.id);
-            
-            if (updateError) throw updateError;
-          }
+        if (data) {
+          const dbSettings = data as unknown as AppSettings;
+          setSettings(dbSettings);
+          localStorage.setItem('appSettings', JSON.stringify(dbSettings));
         }
-      } catch (dbError) {
-        console.warn('Could not save to database, continuing with localStorage only:', dbError);
+      } else {
+        // A tabela não existe, usamos apenas as configurações padrão ou do localStorage
+        console.log('Tabela app_settings não encontrada, usando configurações padrão');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações do banco de dados:', error);
+    }
+  };
+
+  const updateSettings = async (newSettings: AppSettings) => {
+    try {
+      setSettings(newSettings);
+      localStorage.setItem('appSettings', JSON.stringify(newSettings));
+      
+      // Verifica se a tabela existe
+      const { error: tableCheckError } = await supabase
+        .from('app_settings')
+        .select('*')
+        .limit(1)
+        .single();
+      
+      if (!tableCheckError) {
+        // Se a tabela existir, atualiza
+        const { error } = await supabase
+          .from('app_settings')
+          .update(newSettings)
+          .eq('id', 1);
+          
+        if (error) throw error;
       }
       
-      setSettings(updatedSettings);
-      applySettings(updatedSettings);
-      toast.success('Configurações atualizadas com sucesso!');
-    } catch (error: any) {
-      toast.error(`Erro ao atualizar as configurações: ${error.message}`);
-      console.error('Failed to update settings:', error);
+      toast({
+        title: "Configurações atualizadas",
+        description: "As alterações foram salvas com sucesso.",
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar configurações:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar configurações",
+        description: "Ocorreu um erro ao tentar salvar as configurações.",
+      });
+    }
+  };
+
+  const uploadLogo = async (file: File) => {
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `logo-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError, data } = await supabase.storage
+        .from('media')
+        .upload(`logos/${fileName}`, file);
+        
+      if (uploadError) throw uploadError;
+      
+      const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/logos/${fileName}`;
+      
+      updateSettings({ ...settings, logoUrl: url });
+      
+      toast({
+        title: "Logo atualizado",
+        description: "O novo logo foi carregado com sucesso.",
+      });
+    } catch (error) {
+      console.error('Erro ao fazer upload do logo:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar logo",
+        description: "Ocorreu um erro ao tentar carregar o logo.",
+      });
     } finally {
-      setLoading(false);
+      setUploading(false);
+    }
+  };
+  
+  const uploadFavicon = async (file: File) => {
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `favicon-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('media')
+        .upload(`favicons/${fileName}`, file);
+        
+      if (uploadError) throw uploadError;
+      
+      const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/favicons/${fileName}`;
+      
+      updateSettings({ ...settings, faviconUrl: url });
+      
+      // Update favicon link in document head
+      const linkElement = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+      if (linkElement) {
+        linkElement.href = url;
+      } else {
+        const newLink = document.createElement('link');
+        newLink.rel = 'icon';
+        newLink.href = url;
+        document.head.appendChild(newLink);
+      }
+      
+      toast({
+        title: "Favicon atualizado",
+        description: "O novo favicon foi carregado com sucesso.",
+      });
+    } catch (error) {
+      console.error('Erro ao fazer upload do favicon:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar favicon",
+        description: "Ocorreu um erro ao tentar carregar o favicon.",
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
-  const applySettings = (settingsToApply: AppSettings = settings) => {
-    // Apply settings to CSS
-    document.documentElement.style.setProperty('--color-primary', settingsToApply.primaryColor);
-    document.documentElement.style.setProperty('--color-secondary', settingsToApply.secondaryColor);
-    document.documentElement.style.setProperty('--color-accent', settingsToApply.accentColor);
-    document.documentElement.style.setProperty('--font-family', settingsToApply.font);
-    
-    // Update favicon if provided
-    if (settingsToApply.favicon) {
-      const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-      link.setAttribute('rel', 'shortcut icon');
-      link.setAttribute('href', settingsToApply.favicon);
-      document.getElementsByTagName('head')[0].appendChild(link);
-    }
-  };
+  return (
+    <AppSettingsContext.Provider value={{ 
+      settings, 
+      updateSettings, 
+      uploadLogo,
+      uploadFavicon,
+      uploading
+    }}>
+      {children}
+    </AppSettingsContext.Provider>
+  );
+};
 
-  const value = {
-    settings,
-    updateSettings,
-    loading,
-    applySettings
-  };
-
-  return <AppSettingsContext.Provider value={value}>{children}</AppSettingsContext.Provider>;
-}
-
-export function useAppSettings() {
+export const useAppSettings = (): AppSettingsContextType => {
   const context = useContext(AppSettingsContext);
   if (context === undefined) {
     throw new Error('useAppSettings must be used within an AppSettingsProvider');
   }
   return context;
-}
+};

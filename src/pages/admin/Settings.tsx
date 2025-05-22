@@ -1,405 +1,291 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAppSettings, AppSettings } from '@/contexts/AppSettingsContext';
-import { FilePdf, PaintBucket, Font, Image, Settings as SettingsIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { FileDown, Type } from 'lucide-react';
 
-const Settings: React.FC = () => {
-  const { settings, updateSettings, loading } = useAppSettings();
-  const [activeTab, setActiveTab] = useState("cores");
-  
-  const [localSettings, setLocalSettings] = useState<AppSettings>({
-    ...settings
-  });
-  
-  const logoFileInputRef = useRef<HTMLInputElement>(null);
-  const faviconFileInputRef = useRef<HTMLInputElement>(null);
-  
-  // Atualizar as configurações locais quando as configurações globais mudarem
-  useEffect(() => {
-    setLocalSettings({...settings});
-  }, [settings]);
-  
-  const handleChange = (key: keyof AppSettings, value: string) => {
-    setLocalSettings(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-  
-  const handleSaveSettings = async () => {
-    await updateSettings(localSettings);
+const Settings = () => {
+  const { 
+    settings, 
+    updateSettings,
+    uploadLogo,
+    uploadFavicon,
+    uploading
+  } = useAppSettings();
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    updateSettings({ ...settings, [name]: value });
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'favicon') => {
-    const files = e.target.files;
-    if (!files || files.length === 0) {
-      return;
-    }
-    
-    const file = files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${type}-${Date.now()}.${fileExt}`;
-    const filePath = `app-settings/${fileName}`;
-    
-    try {
-      // Upload arquivo para o storage
-      const { error: uploadError, data } = await supabase.storage
-        .from('assets')
-        .upload(filePath, file);
-      
-      if (uploadError) {
-        throw uploadError;
-      }
-      
-      // Obter URL pública
-      const { data: publicUrlData } = supabase.storage
-        .from('assets')
-        .getPublicUrl(filePath);
-        
-      if (publicUrlData) {
-        const publicUrl = publicUrlData.publicUrl;
-        
-        // Atualizar as configurações locais
-        setLocalSettings(prev => ({
-          ...prev,
-          [type]: publicUrl
-        }));
-        
-        toast.success(`${type === 'logo' ? 'Logo' : 'Favicon'} atualizado com sucesso!`);
-      }
-    } catch (error: any) {
-      toast.error(`Erro ao fazer upload: ${error.message}`);
-      console.error('Upload error:', error);
+  const handleFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateSettings({ ...settings, font: e.target.value });
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadLogo(file);
     }
   };
-  
-  const fontOptions = [
-    "Inter, sans-serif",
-    "Roboto, sans-serif",
-    "Poppins, sans-serif",
-    "Montserrat, sans-serif",
-    "Open Sans, sans-serif",
-    "Lato, sans-serif",
-    "Source Sans Pro, sans-serif",
-    "Raleway, sans-serif"
-  ];
+
+  const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadFavicon(file);
+    }
+  };
 
   return (
     <DashboardLayout activeTab="settings">
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h1 className="text-2xl font-bold text-blueDark">Configurações do Sistema</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-blueDark">Configurações</h1>
+          <p className="text-gray-500">Personalize a aparência e comportamento do sistema</p>
         </div>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="cores" className="flex items-center gap-2">
-              <PaintBucket className="h-4 w-4" />
-              <span>Cores</span>
-            </TabsTrigger>
-            <TabsTrigger value="fontes" className="flex items-center gap-2">
-              <Font className="h-4 w-4" />
-              <span>Fontes</span>
-            </TabsTrigger>
-            <TabsTrigger value="imagens" className="flex items-center gap-2">
-              <Image className="h-4 w-4" />
-              <span>Imagens</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="cores">
+      </div>
+
+      <Tabs defaultValue="appearance">
+        <TabsList className="mb-6">
+          <TabsTrigger value="appearance">Aparência</TabsTrigger>
+          <TabsTrigger value="branding">Marca</TabsTrigger>
+          <TabsTrigger value="notifications">Notificações</TabsTrigger>
+          <TabsTrigger value="advanced">Avançado</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="appearance">
+          <div className="grid gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Personalização de Cores</CardTitle>
+                <CardTitle>Cores</CardTitle>
                 <CardDescription>
-                  Customize as cores da sua aplicação. As alterações serão aplicadas a todos os usuários.
+                  Personalize as cores utilizadas em todo o sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="grid gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="primaryColor">Cor Primária</Label>
-                    <div className="flex items-center gap-2">
-                      <Input
+                    <div className="flex">
+                      <Input 
                         id="primaryColor"
-                        type="color"
-                        value={localSettings.primaryColor}
-                        onChange={(e) => handleChange('primaryColor', e.target.value)}
-                        className="w-16 h-10 p-1"
-                      />
-                      <Input
-                        type="text"
-                        value={localSettings.primaryColor}
-                        onChange={(e) => handleChange('primaryColor', e.target.value)}
-                        className="flex-1"
-                      />
-                      <div 
-                        className="w-8 h-8 rounded-md border" 
-                        style={{ backgroundColor: localSettings.primaryColor }}
+                        name="primaryColor"
+                        type="color" 
+                        value={settings.primaryColor}
+                        onChange={handleColorChange}
+                        className="w-full h-10"
                       />
                     </div>
-                    <p className="text-sm text-gray-500">
-                      Utilizada em cabeçalhos, botões principais e elementos de destaque.
-                    </p>
+                    <p className="text-xs text-gray-500">{settings.primaryColor}</p>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="secondaryColor">Cor Secundária</Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="secondaryColor"
-                        type="color"
-                        value={localSettings.secondaryColor}
-                        onChange={(e) => handleChange('secondaryColor', e.target.value)}
-                        className="w-16 h-10 p-1"
-                      />
-                      <Input
-                        type="text"
-                        value={localSettings.secondaryColor}
-                        onChange={(e) => handleChange('secondaryColor', e.target.value)}
-                        className="flex-1"
-                      />
-                      <div 
-                        className="w-8 h-8 rounded-md border" 
-                        style={{ backgroundColor: localSettings.secondaryColor }}
+                    <div className="flex">
+                      <Input 
+                        id="secondaryColor" 
+                        name="secondaryColor"
+                        type="color" 
+                        value={settings.secondaryColor}
+                        onChange={handleColorChange}
+                        className="w-full h-10"
                       />
                     </div>
-                    <p className="text-sm text-gray-500">
-                      Utilizada em fundos, áreas de conteúdo e elementos secundários.
-                    </p>
+                    <p className="text-xs text-gray-500">{settings.secondaryColor}</p>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="accentColor">Cor de Destaque</Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="accentColor"
-                        type="color"
-                        value={localSettings.accentColor}
-                        onChange={(e) => handleChange('accentColor', e.target.value)}
-                        className="w-16 h-10 p-1"
-                      />
-                      <Input
-                        type="text"
-                        value={localSettings.accentColor}
-                        onChange={(e) => handleChange('accentColor', e.target.value)}
-                        className="flex-1"
-                      />
-                      <div 
-                        className="w-8 h-8 rounded-md border" 
-                        style={{ backgroundColor: localSettings.accentColor }}
+                    <div className="flex">
+                      <Input 
+                        id="accentColor" 
+                        name="accentColor"
+                        type="color" 
+                        value={settings.accentColor}
+                        onChange={handleColorChange}
+                        className="w-full h-10"
                       />
                     </div>
-                    <p className="text-sm text-gray-500">
-                      Utilizada em elementos que precisam de destaque, como ícones, links e botões de ação.
-                    </p>
+                    <p className="text-xs text-gray-500">{settings.accentColor}</p>
                   </div>
                 </div>
                 
-                <div className="pt-4">
-                  <h3 className="text-lg font-medium mb-2">Visualização</h3>
-                  <div className="border rounded-md p-4 space-y-4">
-                    <div 
-                      className="p-4 rounded-md text-white"
-                      style={{ backgroundColor: localSettings.primaryColor }}
-                    >
-                      Área com cor primária
-                    </div>
-                    <div 
-                      className="p-4 rounded-md border"
-                      style={{ backgroundColor: localSettings.secondaryColor }}
-                    >
-                      Área com cor secundária
-                    </div>
-                    <div className="flex gap-2">
-                      <button 
-                        className="px-4 py-2 rounded-md text-white"
-                        style={{ backgroundColor: localSettings.primaryColor }}
-                      >
-                        Botão Primário
-                      </button>
-                      <button 
-                        className="px-4 py-2 rounded-md border"
-                        style={{ 
-                          backgroundColor: localSettings.secondaryColor, 
-                          borderColor: localSettings.primaryColor,
-                          color: localSettings.primaryColor 
-                        }}
-                      >
-                        Botão Secundário
-                      </button>
-                      <button 
-                        className="px-4 py-2 rounded-md text-white"
-                        style={{ backgroundColor: localSettings.accentColor }}
-                      >
-                        Botão de Destaque
-                      </button>
-                    </div>
-                    <div>
-                      <span>Texto normal e </span>
-                      <a href="#" style={{ color: localSettings.accentColor }}>link de destaque</a>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="fontes">
-            <Card>
-              <CardHeader>
-                <CardTitle>Personalização de Fontes</CardTitle>
-                <CardDescription>
-                  Escolha a fonte que será utilizada em toda a aplicação.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="font">Fonte Principal</Label>
-                  <select
-                    id="font"
-                    value={localSettings.font}
-                    onChange={(e) => handleChange('font', e.target.value)}
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {fontOptions.map((font) => (
-                      <option key={font} value={font} style={{ fontFamily: font }}>
-                        {font.split(',')[0]} - Exemplo de texto
-                      </option>
-                    ))}
-                  </select>
+                  <Label htmlFor="font">Fonte</Label>
+                  <div className="flex gap-2 items-center">
+                    <Type className="h-5 w-5 text-gray-500" />
+                    <select
+                      id="font"
+                      value={settings.font}
+                      onChange={handleFontChange}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="font-body">Padrão (Inter)</option>
+                      <option value="font-sans">Sans-serif</option>
+                      <option value="font-serif">Serif</option>
+                      <option value="font-mono">Monospace</option>
+                    </select>
+                  </div>
+                  <p className="text-xs text-gray-500">Selecione a fonte utilizada em todo o sistema</p>
                 </div>
                 
-                <div className="pt-4">
-                  <h3 className="text-lg font-medium mb-2">Visualização</h3>
-                  <div className="border rounded-md p-4 space-y-4">
-                    <div style={{ fontFamily: localSettings.font }}>
-                      <h1 className="text-2xl font-bold mb-2">Título de exemplo</h1>
-                      <p className="mb-4">
-                        Este é um texto de exemplo para visualizar como a fonte escolhida será exibida no site.
-                        Textos em diferentes tamanhos ajudam a verificar a legibilidade da fonte em vários contextos.
-                      </p>
-                      <p className="text-sm">
-                        Este é um texto menor para avaliar como a fonte se comporta em tamanhos reduzidos.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <Button onClick={() => updateSettings(settings)} disabled={uploading}>
+                  Salvar Alterações
+                </Button>
               </CardContent>
             </Card>
-          </TabsContent>
-          
-          <TabsContent value="imagens">
+            
             <Card>
               <CardHeader>
-                <CardTitle>Personalização de Imagens</CardTitle>
+                <CardTitle>Prévia</CardTitle>
                 <CardDescription>
-                  Atualize o logo e o favicon da aplicação.
+                  Veja como as cores e fontes selecionadas ficam em diferentes elementos
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Logo</h3>
-                  <div className="border rounded-md p-4 flex flex-col items-center justify-center">
-                    {localSettings.logo ? (
-                      <div className="mb-4">
-                        <img 
-                          src={localSettings.logo} 
-                          alt="Logo atual" 
-                          className="max-h-24 max-w-full object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="mb-4 bg-gray-100 rounded-md p-6 flex items-center justify-center">
-                        <svg className="w-16 h-16 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path>
-                        </svg>
-                      </div>
-                    )}
-                    
-                    <input 
-                      type="file" 
-                      ref={logoFileInputRef}
-                      onChange={(e) => handleFileUpload(e, 'logo')}
-                      accept="image/*" 
-                      className="hidden" 
-                    />
-                    
-                    <Button 
-                      variant="outline"
-                      onClick={() => logoFileInputRef.current?.click()}
-                    >
-                      Escolher novo logo
-                    </Button>
-                    
-                    <p className="mt-2 text-sm text-gray-500">
-                      Recomendação: Imagem em formato PNG ou SVG com fundo transparente, dimensões de 200x60 pixels.
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: settings.primaryColor }}>
+                    <h3 className="text-white font-bold mb-2">Cor Primária</h3>
+                    <p className="text-white opacity-90">Este é um exemplo de texto sobre a cor primária selecionada.</p>
+                  </div>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: settings.secondaryColor }}>
+                    <h3 className="text-white font-bold mb-2">Cor Secundária</h3>
+                    <p className="text-white opacity-90">Este é um exemplo de texto sobre a cor secundária selecionada.</p>
+                  </div>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: settings.accentColor }}>
+                    <h3 className="text-white font-bold mb-2">Cor de Destaque</h3>
+                    <p className="text-white opacity-90">Este é um exemplo de texto sobre a cor de destaque selecionada.</p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className={`font-bold mb-2 ${settings.font}`}>Exemplo de Título com a Fonte Selecionada</h3>
+                    <p className={settings.font}>
+                      Este é um exemplo de texto com a fonte selecionada. O objetivo é mostrar como o texto ficará em diferentes tamanhos e estilos.
                     </p>
                   </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Favicon</h3>
-                  <div className="border rounded-md p-4 flex flex-col items-center justify-center">
-                    {localSettings.favicon ? (
-                      <div className="mb-4">
-                        <img 
-                          src={localSettings.favicon} 
-                          alt="Favicon atual" 
-                          className="w-16 h-16 object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="mb-4 bg-gray-100 rounded-md p-4 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path>
-                        </svg>
-                      </div>
-                    )}
-                    
-                    <input 
-                      type="file" 
-                      ref={faviconFileInputRef}
-                      onChange={(e) => handleFileUpload(e, 'favicon')}
-                      accept="image/*" 
-                      className="hidden" 
-                    />
-                    
-                    <Button 
-                      variant="outline"
-                      onClick={() => faviconFileInputRef.current?.click()}
-                    >
-                      Escolher novo favicon
+                  <div className="flex gap-2">
+                    <Button style={{ backgroundColor: settings.primaryColor }}>
+                      Botão Primário
                     </Button>
-                    
-                    <p className="mt-2 text-sm text-gray-500">
-                      Recomendação: Imagem em formato PNG com dimensões de 32x32 ou 16x16 pixels.
-                    </p>
+                    <Button variant="outline" style={{ borderColor: settings.secondaryColor, color: settings.secondaryColor }}>
+                      Botão Secundário
+                    </Button>
+                    <Button variant="ghost" style={{ color: settings.accentColor }}>
+                      Botão Fantasma
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
-        
-        <div className="flex justify-end">
-          <Button 
-            className="bg-blueDark hover:bg-[#0f2435] text-white"
-            onClick={handleSaveSettings}
-            disabled={loading}
-          >
-            {loading ? 'Salvando...' : 'Salvar Configurações'}
-          </Button>
-        </div>
-      </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="branding">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Logotipo e Favicon</CardTitle>
+                <CardDescription>
+                  Faça o upload do logotipo e favicon da sua empresa
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="logo">Logotipo</Label>
+                  <div className="flex flex-col gap-4">
+                    {settings.logoUrl && (
+                      <div className="max-w-xs p-4 border rounded-md">
+                        <img 
+                          src={settings.logoUrl} 
+                          alt="Logo atual" 
+                          className="max-h-20 w-auto"
+                        />
+                      </div>
+                    )}
+                    <Input 
+                      id="logo" 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      disabled={uploading}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Tamanho recomendado: 200x50 pixels, formatos: JPG, PNG</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="favicon">Favicon</Label>
+                  <div className="flex flex-col gap-4">
+                    {settings.faviconUrl && (
+                      <div className="max-w-xs p-4 border rounded-md bg-gray-50 flex items-center justify-center">
+                        <img 
+                          src={settings.faviconUrl} 
+                          alt="Favicon atual" 
+                          className="max-h-10 w-auto"
+                        />
+                      </div>
+                    )}
+                    <Input 
+                      id="favicon" 
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFaviconUpload} 
+                      disabled={uploading}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Tamanho recomendado: 32x32 pixels, formatos: PNG, JPG</p>
+                </div>
+                
+                <Button onClick={() => updateSettings(settings)} disabled={uploading}>
+                  {uploading ? 'Processando...' : 'Salvar Alterações'}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações de Notificação</CardTitle>
+              <CardDescription>
+                Configure como você deseja receber notificações
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-gray-500">
+                Configurações de notificação serão implementadas em breve.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="advanced">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações Avançadas</CardTitle>
+              <CardDescription>
+                Opções avançadas de configuração do sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-gray-500">
+                Configurações avançadas serão implementadas em breve.
+              </p>
+              <div className="space-y-4">
+                <Button variant="outline" className="gap-2">
+                  <FileDown className="h-4 w-4" />
+                  Exportar Dados do Sistema
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   );
 };
