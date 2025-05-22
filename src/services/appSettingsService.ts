@@ -10,10 +10,12 @@ import type { AppSettingsTable } from '@/types/supabase-rpc';
  */
 const appSettingsTable = {
   async getSettings(): Promise<{data: AppSettingsTable | null, error: any}> {
-    return supabase.from('app_settings').select('*').maybeSingle();
+    // Use the correct type cast to make TypeScript recognize this table
+    return supabase.from('app_settings' as any).select('*').maybeSingle();
   },
   async updateSettings(settings: AppSettings): Promise<{data: any, error: any}> {
-    return supabase.from('app_settings').update({
+    // Use the correct type cast to make TypeScript recognize this table
+    return supabase.from('app_settings' as any).update({
       primaryColor: settings.primaryColor,
       secondaryColor: settings.secondaryColor,
       accentColor: settings.accentColor,

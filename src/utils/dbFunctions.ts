@@ -10,7 +10,7 @@ export async function checkIfTableExists(tableName: string): Promise<boolean> {
   try {
     // Use a properly typed parameter object for the RPC call
     const { data, error } = await supabase
-      .rpc('check_if_table_exists', { table_name: tableName });
+      .rpc<{ table_name: string }, boolean>('check_if_table_exists', { table_name: tableName });
     
     if (error) {
       console.error('Erro ao verificar tabela:', error);
@@ -35,7 +35,7 @@ export async function callRpcFunction<T = any>(
   params: Record<string, unknown>
 ): Promise<{data: T | null, error: any}> {
   try {
-    const { data, error } = await supabase.rpc(fnName, params);
+    const { data, error } = await supabase.rpc<typeof params, T>(fnName, params);
     return { data, error };
   } catch (error) {
     return { data: null, error };
