@@ -3,7 +3,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { FileText, Download, Loader2 } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/lib/formatters';
+import { formatCurrency, formatDate, formatStatus, formatProjectType } from '@/lib/formatters';
 
 export interface BudgetRequest {
   id: string;
@@ -21,9 +21,14 @@ export interface BudgetRequest {
 interface BudgetRequestListProps {
   budgetRequests: BudgetRequest[];
   loading: boolean;
+  onViewDetails: (budgetRequest: BudgetRequest) => void;
 }
 
-export const BudgetRequestList: React.FC<BudgetRequestListProps> = ({ budgetRequests, loading }) => {
+export const BudgetRequestList: React.FC<BudgetRequestListProps> = ({ 
+  budgetRequests, 
+  loading,
+  onViewDetails
+}) => {
   const getStatusColor = (status: string) => {
     switch(status) {
       case 'pendente': return 'bg-yellow-100 text-yellow-800';
@@ -59,29 +64,37 @@ export const BudgetRequestList: React.FC<BudgetRequestListProps> = ({ budgetRequ
         <TableBody>
           {budgetRequests.length > 0 ? (
             budgetRequests.map((request, index) => (
-              <TableRow key={request.id}>
+              <TableRow 
+                key={request.id}
+                className="cursor-pointer hover:bg-gray-50"
+                onClick={() => onViewDetails(request)}
+              >
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{request.client_name}</TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {request.project_type === 'drywall' ? 'Drywall' :
-                   request.project_type === 'steel-frame' ? 'Steel Frame' :
-                   request.project_type === 'madeira' ? 'Estrutura em Madeira' : request.project_type}
+                  {formatProjectType(request.project_type)}
                 </TableCell>
                 <TableCell>
                   {request.estimated_value ? formatCurrency(request.estimated_value) : 'Não definido'}
                 </TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(request.status)}`}>
-                    {request.status === 'pendente' ? 'Pendente' :
-                     request.status === 'em_analise' ? 'Em análise' :
-                     request.status === 'aprovado' ? 'Aprovado' :
-                     request.status === 'negado' ? 'Negado' : request.status}
+                    {formatStatus(request.status)}
                   </span>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">{formatDate(request.created_at)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Ver Detalhes">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8" 
+                      title="Ver Detalhes"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onViewDetails(request);
+                      }}
+                    >
                       <FileText className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8" title="Baixar PDF">

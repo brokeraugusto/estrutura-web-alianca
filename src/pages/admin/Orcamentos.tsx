@@ -4,12 +4,16 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { BudgetRequestForm } from '@/components/admin/budget/BudgetRequestForm';
-import { BudgetRequestList } from '@/components/admin/budget/BudgetRequestList';
+import { BudgetRequestList, BudgetRequest } from '@/components/admin/budget/BudgetRequestList';
 import { BudgetFilters } from '@/components/admin/budget/BudgetFilters';
+import { BudgetRequestDetail } from '@/components/admin/budget/BudgetRequestDetail';
 import { useBudgetRequests } from '@/hooks/useBudgetRequests';
 
 const Orcamentos: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [selectedBudget, setSelectedBudget] = useState<BudgetRequest | null>(null);
+  
   const { 
     loading, 
     budgetRequests, 
@@ -26,6 +30,21 @@ const Orcamentos: React.FC = () => {
   const handleBudgetCreated = () => {
     setDialogOpen(false);
     fetchBudgetRequests();
+  };
+
+  const handleViewDetails = (budgetRequest: BudgetRequest) => {
+    setSelectedBudget(budgetRequest);
+    setDetailDialogOpen(true);
+  };
+
+  const handleDetailClose = () => {
+    setDetailDialogOpen(false);
+    setSelectedBudget(null);
+  };
+
+  const handleBudgetUpdated = () => {
+    fetchBudgetRequests();
+    setDetailDialogOpen(false);
   };
 
   return (
@@ -66,7 +85,8 @@ const Orcamentos: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <BudgetRequestList 
           budgetRequests={budgetRequests} 
-          loading={loading} 
+          loading={loading}
+          onViewDetails={handleViewDetails}
         />
         <div className="border-t border-gray-200 p-4 flex items-center justify-between">
           <p className="text-sm text-gray-500">
@@ -75,6 +95,17 @@ const Orcamentos: React.FC = () => {
           {/* Pagination can be added here when needed */}
         </div>
       </div>
+
+      {/* Budget detail dialog */}
+      <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <BudgetRequestDetail 
+            budgetRequest={selectedBudget} 
+            onClose={handleDetailClose}
+            onSave={handleBudgetUpdated}
+          />
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };
