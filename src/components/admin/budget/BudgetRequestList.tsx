@@ -2,8 +2,9 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2 } from 'lucide-react';
+import { FileText, Download, Loader2, FilePdf } from 'lucide-react';
 import { formatCurrency, formatDate, formatStatus, formatProjectType } from '@/lib/formatters';
+import { exportBudgetToPDF } from '@/utils/pdfExport';
 
 export interface BudgetRequest {
   id: string;
@@ -37,6 +38,11 @@ export const BudgetRequestList: React.FC<BudgetRequestListProps> = ({
       case 'negado': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleExportPDF = (budgetRequest: BudgetRequest, e: React.MouseEvent) => {
+    e.stopPropagation();
+    exportBudgetToPDF(budgetRequest);
   };
 
   if (loading) {
@@ -97,8 +103,14 @@ export const BudgetRequestList: React.FC<BudgetRequestListProps> = ({
                     >
                       <FileText className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Baixar PDF">
-                      <Download className="h-4 w-4" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8" 
+                      title="Baixar PDF"
+                      onClick={(e) => handleExportPDF(request, e)}
+                    >
+                      <FilePdf className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>

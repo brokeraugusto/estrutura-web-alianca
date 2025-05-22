@@ -1,11 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, LogIn } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +52,26 @@ const Header: React.FC = () => {
           <Link to="/contato" className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium">
             Contato
           </Link>
+          
+          {user ? (
+            <Button 
+              variant="outline" 
+              className="flex items-center text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
+              onClick={() => navigate('/admin/dashboard')}
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Painel
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="flex items-center text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
+              onClick={() => navigate('/login')}
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Login
+            </Button>
+          )}
         </div>
         
         <div className="md:hidden relative">
@@ -93,6 +117,23 @@ const Header: React.FC = () => {
                 >
                   Contato
                 </Link>
+                {user ? (
+                  <Link
+                    to="/admin/dashboard"
+                    className="text-blueDark font-medium hover:underline"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Painel Admin
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="text-blueDark font-medium hover:underline"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </div>
           )}

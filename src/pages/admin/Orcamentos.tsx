@@ -8,6 +8,8 @@ import { BudgetRequestList, BudgetRequest } from '@/components/admin/budget/Budg
 import { BudgetFilters } from '@/components/admin/budget/BudgetFilters';
 import { BudgetRequestDetail } from '@/components/admin/budget/BudgetRequestDetail';
 import { useBudgetRequests } from '@/hooks/useBudgetRequests';
+import { exportBudgetListToPDF } from '@/utils/pdfExport';
+import { FilePdf } from 'lucide-react';
 
 const Orcamentos: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -46,28 +48,43 @@ const Orcamentos: React.FC = () => {
     fetchBudgetRequests();
     setDetailDialogOpen(false);
   };
+  
+  const handleExportAllToPDF = () => {
+    exportBudgetListToPDF(budgetRequests);
+  };
 
   return (
     <DashboardLayout activeTab="orcamentos">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <h1 className="text-2xl font-bold text-blueDark">Gerenciar Orçamentos</h1>
         
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-blueDark hover:bg-[#0f2435] text-white">
-              Novo Orçamento
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Criar Novo Orçamento</DialogTitle>
-            </DialogHeader>
-            <BudgetRequestForm 
-              onSuccess={handleBudgetCreated} 
-              onCancel={() => setDialogOpen(false)} 
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+            onClick={handleExportAllToPDF}
+          >
+            <FilePdf className="h-4 w-4" />
+            Exportar PDF
+          </Button>
+          
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-blueDark hover:bg-[#0f2435] text-white">
+                Novo Orçamento
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Criar Novo Orçamento</DialogTitle>
+              </DialogHeader>
+              <BudgetRequestForm 
+                onSuccess={handleBudgetCreated} 
+                onCancel={() => setDialogOpen(false)} 
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       
       {/* Filtros e busca */}

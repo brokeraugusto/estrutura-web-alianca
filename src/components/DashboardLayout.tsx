@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, User, LayoutDashboard, FileText, Mail, LogOut } from 'lucide-react';
+import { Menu, User, LayoutDashboard, FileText, Mail, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardLayoutProps {
@@ -19,7 +19,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }
     { name: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5 mr-2" />, path: '/admin/dashboard' },
     { name: 'Projetos', icon: <FileText className="w-5 h-5 mr-2" />, path: '/admin/projetos' },
     { name: 'Leads', icon: <User className="w-5 h-5 mr-2" />, path: '/admin/leads' },
-    { name: 'Orçamentos', icon: <Mail className="w-5 h-5 mr-2" />, path: '/admin/orcamentos' },
+    { name: 'Orcamentos', icon: <Mail className="w-5 h-5 mr-2" />, path: '/admin/orcamentos' },
+    { name: 'Settings', icon: <Settings className="w-5 h-5 mr-2" />, path: '/admin/settings' },
   ];
 
   return (
