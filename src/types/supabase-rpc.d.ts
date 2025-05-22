@@ -1,10 +1,9 @@
 
 // This file safely extends the Supabase types without modifying the generated types
+import type { Database as GeneratedDatabase } from '@/integrations/supabase/types';
 
-import { SupabaseClient } from '@supabase/supabase-js';
-
-// Define how app_settings interface without extending the Database type directly
-export interface AppSettingsRow {
+// Define app_settings interface
+export interface AppSettingsTable {
   id: number;
   primaryColor: string;
   secondaryColor: string;
@@ -12,6 +11,26 @@ export interface AppSettingsRow {
   font: string;
   logoUrl?: string | null;
   faviconUrl?: string | null;
+}
+
+// Extend the Database type from the generated types
+declare module '@/integrations/supabase/types' {
+  interface Database extends GeneratedDatabase {
+    public: {
+      Tables: {
+        app_settings: {
+          Row: AppSettingsTable;
+          Insert: Partial<AppSettingsTable>;
+          Update: Partial<AppSettingsTable>;
+          Relationships: [];
+        };
+      } & GeneratedDatabase['public']['Tables'];
+      Views: GeneratedDatabase['public']['Views'];
+      Functions: GeneratedDatabase['public']['Functions'];
+      Enums: GeneratedDatabase['public']['Enums'];
+      CompositeTypes: GeneratedDatabase['public']['CompositeTypes'];
+    };
+  }
 }
 
 // Extend the SupabaseClient RPC typing

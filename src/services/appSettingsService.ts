@@ -2,13 +2,14 @@
 import { supabase } from '@/integrations/supabase/client';
 import { AppSettings, defaultSettings } from '@/types/appSettings';
 import { checkIfTableExists } from '@/utils/dbFunctions';
+import type { AppSettingsTable } from '@/types/supabase-rpc';
 
 /**
  * Create a type-safe wrapper for app_settings table operations
  * This avoids direct reliance on database types
  */
 const appSettingsTable = {
-  async getSettings(): Promise<{data: any, error: any}> {
+  async getSettings(): Promise<{data: AppSettingsTable | null, error: any}> {
     return supabase.from('app_settings').select('*').maybeSingle();
   },
   async updateSettings(settings: AppSettings): Promise<{data: any, error: any}> {
