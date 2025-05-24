@@ -32,7 +32,7 @@ export async function callRpcFunction<T = any>(
   params: Record<string, unknown> = {}
 ): Promise<{data: T | null, error: any}> {
   try {
-    const { data, error } = await supabase.rpc(fnName, params);
+    const { data, error } = await (supabase.rpc as any)(fnName, params);
     return { data, error };
   } catch (error) {
     return { data: null, error };

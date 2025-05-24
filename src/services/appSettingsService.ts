@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { AppSettings, defaultSettings } from '@/types/appSettings';
 import { checkIfTableExists } from '@/utils/dbFunctions';
@@ -10,19 +9,17 @@ import type { AppSettingsTable } from '@/types/supabase-rpc';
  */
 const appSettingsTable = {
   async getSettings(): Promise<{data: AppSettingsTable | null, error: any}> {
-    // Type assertion é necessário porque a tabela pode não existir ainda no schema
-    return supabase.from('app_settings' as any).select('*').maybeSingle();
+    return (supabase.from as any)('app_settings').select('*').maybeSingle();
   },
   async updateSettings(settings: AppSettings): Promise<{data: any, error: any}> {
-    // Type assertion também necessário para atualização
-    return supabase.from('app_settings' as any).update({
+    return (supabase.from as any)('app_settings').update({
       primaryColor: settings.primaryColor,
       secondaryColor: settings.secondaryColor,
       accentColor: settings.accentColor,
       font: settings.font,
       logoUrl: settings.logoUrl,
       faviconUrl: settings.faviconUrl
-    } as any).eq('id', 1);
+    }).eq('id', 1);
   }
 };
 
