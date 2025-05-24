@@ -1,4 +1,5 @@
 
+
 // This file safely extends the Supabase types without modifying the generated types
 import type { Database as GeneratedDatabase } from '@/integrations/supabase/types';
 
@@ -13,20 +14,18 @@ export interface AppSettingsTable {
   faviconUrl?: string | null;
 }
 
-// Use proper module augmentation syntax to extend existing Database
-declare module '@/integrations/supabase/types' {
-  interface Database {
-    public: GeneratedDatabase['public'] & {
-      Tables: GeneratedDatabase['public']['Tables'] & {
-        app_settings: {
-          Row: AppSettingsTable;
-          Insert: Partial<AppSettingsTable>;
-          Update: Partial<AppSettingsTable>;
-        };
+// Create an extended database type that includes app_settings
+export type ExtendedDatabase = {
+  public: GeneratedDatabase['public'] & {
+    Tables: GeneratedDatabase['public']['Tables'] & {
+      app_settings: {
+        Row: AppSettingsTable;
+        Insert: Partial<AppSettingsTable>;
+        Update: Partial<AppSettingsTable>;
       };
     };
-  }
-}
+  };
+};
 
 // Extend the SupabaseClient RPC typing
 declare module '@supabase/supabase-js' {
@@ -46,3 +45,4 @@ declare module '@supabase/supabase-js' {
     ): import('@supabase/supabase-js').PostgrestFilterBuilder<any, ReturnType, any>;
   }
 }
+
