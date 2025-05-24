@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseWrapper } from '@/lib/supabase-wrapper';
 import { useToast } from '@/hooks/use-toast';
 import { BudgetRequest } from '@/components/admin/budget/BudgetRequestList';
 
@@ -19,16 +19,16 @@ export function useBudgetRequests() {
   async function fetchBudgetRequests() {
     try {
       setLoading(true);
+      console.log('Fetching budget requests...');
       
-      const { data, error } = await supabase
-        .from('budget_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabaseWrapper.budgetRequests.getAll();
       
       if (error) {
+        console.error('Error fetching budget requests:', error);
         throw error;
       }
       
+      console.log('Budget requests fetched:', data);
       setBudgetRequests(data || []);
     } catch (error) {
       console.error('Error fetching budget requests:', error);

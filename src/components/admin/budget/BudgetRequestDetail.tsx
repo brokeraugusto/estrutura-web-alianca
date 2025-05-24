@@ -1,14 +1,12 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { formatCurrency, formatDate, formatStatus, formatProjectType } from '@/lib/formatters';
 import { BudgetRequest } from '@/components/admin/budget/BudgetRequestList';
 import { Loader2, Save, X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseWrapper } from '@/lib/supabase-wrapper';
 import { useToast } from '@/hooks/use-toast';
 
 interface BudgetRequestDetailProps {
@@ -42,23 +40,23 @@ export const BudgetRequestDetail: React.FC<BudgetRequestDetailProps> = ({
     
     try {
       setSaving(true);
+      console.log('Updating budget request:', budgetRequest.id, formData);
       
-      // Only update the fields that have been changed
-      const { data, error } = await supabase
-        .from('budget_requests')
-        .update({
-          client_name: formData.client_name,
-          client_email: formData.client_email,
-          client_phone: formData.client_phone,
-          project_type: formData.project_type,
-          project_description: formData.project_description,
-          estimated_value: formData.estimated_value ? Number(formData.estimated_value) : null,
-          status: formData.status,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', budgetRequest.id);
+      const { error } = await supabaseWrapper.budgetRequests.update(budgetRequest.id, {
+        client_name: formData.client_name,
+        client_email: formData.client_email,
+        client_phone: formData.client_phone,
+        project_type: formData.project_type,
+        project_description: formData.project_description,
+        estimated_value: formData.estimated_value ? Number(formData.estimated_value) : null,
+        status: formData.status,
+        updated_at: new Date().toISOString(),
+      });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating budget request:', error);
+        throw error;
+      }
       
       toast({
         title: "Orçamento atualizado",

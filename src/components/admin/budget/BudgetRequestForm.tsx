@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseWrapper } from '@/lib/supabase-wrapper';
 import { useToast } from '@/hooks/use-toast';
 
 interface BudgetRequestFormProps {
@@ -40,19 +40,19 @@ export const BudgetRequestForm: React.FC<BudgetRequestFormProps> = ({ onSuccess,
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from('budget_requests')
-        .insert([{
-          client_name: formData.client_name,
-          client_email: formData.client_email,
-          client_phone: formData.client_phone,
-          project_type: formData.project_type,
-          project_description: formData.description,
-          estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
-          status: 'pendente'
-        }]);
+      console.log('Creating budget request:', formData);
+      const { error } = await supabaseWrapper.budgetRequests.create({
+        client_name: formData.client_name,
+        client_email: formData.client_email,
+        client_phone: formData.client_phone,
+        project_type: formData.project_type,
+        project_description: formData.description,
+        estimated_value: formData.estimated_value ? parseFloat(formData.estimated_value) : null,
+        status: 'pendente'
+      });
       
       if (error) {
+        console.error('Error creating budget request:', error);
         throw error;
       }
       

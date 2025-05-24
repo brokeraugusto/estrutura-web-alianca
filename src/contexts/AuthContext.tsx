@@ -1,13 +1,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Session, User } from '@supabase/supabase-js';
+import { supabaseWrapper } from '@/lib/supabase-wrapper';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 type AuthContextType = {
-  session: Session | null;
-  user: User | null;
+  session: any | null;
+  user: any | null;
   profile: any | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -18,8 +17,8 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -27,13 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Set up the auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+    const { data: { subscription } } = supabaseWrapper.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        console.log('Auth state changed:', event, currentSession);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          // Defer Supabase calls
+          // Defer profile fetch
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
           }, 0);
@@ -41,11 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setProfile(null);
           setIsAdmin(false);
         }
+        setLoading(false);
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabaseWrapper.auth.session.then(({ data: { session: currentSession } }) => {
+      console.log('Initial session:', currentSession);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -62,17 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function fetchUserProfile(userId: string) {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      console.log('Fetching profile for user:', userId);
+      const { data, error } = await supabaseWrapper.profiles.getById(userId);
       
       if (error) {
         console.error('Error fetching profile:', error);
         return;
       }
       
+      console.log('Profile data:', data);
       setProfile(data);
       setIsAdmin(data?.role === 'admin');
     } catch (error) {
@@ -82,12 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signIn(email: string, password: string) {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting to sign in:', email);
+      const { error } = await supabaseWrapper.auth.signInWithPassword({
         email,
         password
       });
 
       if (error) {
+        console.error('Sign in error:', error);
         toast.error(error.message);
         throw error;
       }
@@ -102,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signOut() {
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabaseWrapper.auth.signOut();
       if (error) throw error;
       navigate('/login');
       toast.success('Logout realizado com sucesso!');
