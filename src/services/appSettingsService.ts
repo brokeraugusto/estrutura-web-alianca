@@ -1,27 +1,7 @@
-import { supabase } from '@/integrations/supabase/client';
+
+import { supabaseWrapper, type AppSettingsRow } from '@/lib/supabase-wrapper';
 import { AppSettings, defaultSettings } from '@/types/appSettings';
 import { checkIfTableExists } from '@/utils/dbFunctions';
-import type { AppSettingsTable } from '@/types/supabase-rpc';
-
-/**
- * Create a type-safe wrapper for app_settings table operations
- * This avoids direct reliance on database types
- */
-const appSettingsTable = {
-  async getSettings(): Promise<{data: AppSettingsTable | null, error: any}> {
-    return (supabase.from as any)('app_settings').select('*').maybeSingle();
-  },
-  async updateSettings(settings: AppSettings): Promise<{data: any, error: any}> {
-    return (supabase.from as any)('app_settings').update({
-      primaryColor: settings.primaryColor,
-      secondaryColor: settings.secondaryColor,
-      accentColor: settings.accentColor,
-      font: settings.font,
-      logoUrl: settings.logoUrl,
-      faviconUrl: settings.faviconUrl
-    }).eq('id', 1);
-  }
-};
 
 export async function loadAppSettings(): Promise<AppSettings> {
   // First try to load from localStorage
@@ -41,8 +21,7 @@ export async function loadAppSettings(): Promise<AppSettings> {
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
-      // The table exists, safely fetch the data with type-safe wrapper
-      const { data: settingsData, error: fetchError } = await appSettingsTable.getSettings();
+      const { data: settingsData, error: fetchError } = await supabaseWrapper.appSettings.get();
       
       if (fetchError) {
         console.error('Erro ao buscar configurações:', fetchError);
@@ -64,7 +43,6 @@ export async function loadAppSettings(): Promise<AppSettings> {
         return dbSettings;
       }
     } else {
-      // The table doesn't exist, using only default settings or localStorage
       console.log('Tabela app_settings não encontrada, usando configurações padrão');
     }
   } catch (error) {
@@ -82,7 +60,16 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
-      const updateResult = await appSettingsTable.updateSettings(newSettings);
+      const updateData: Partial<AppSettingsRow> = {
+        primaryColor: newSettings.primaryColor,
+        secondaryColor: newSettings.secondaryColor,
+        accentColor: newSettings.accentColor,
+        font: newSettings.font,
+        logoUrl: newSettings.logoUrl,
+        faviconUrl: newSettings.faviconUrl
+      };
+      
+      const updateResult = await supabaseWrapper.appSettings.update(updateData);
       if (updateResult.error) throw updateResult.error;
     }
     
@@ -98,14 +85,14 @@ export async function uploadMedia(file: File, folder: 'logos' | 'favicons'): Pro
     const fileExt = file.name.split('.').pop();
     const fileName = `${folder === 'logos' ? 'logo' : 'favicon'}-${Date.now()}.${fileExt}`;
     
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabaseWrapper.storage
       .from('media')
       .upload(`${folder}/${fileName}`, file);
       
     if (uploadError) throw uploadError;
     
     // Get the public URL for the uploaded file
-    const { data } = supabase.storage
+    const { data } = supabaseWrapper.storage
       .from('media')
       .getPublicUrl(`${folder}/${fileName}`);
     

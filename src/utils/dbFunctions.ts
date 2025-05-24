@@ -1,5 +1,5 @@
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseWrapper } from '@/lib/supabase-wrapper';
 
 /**
  * Checks if a table exists in the database
@@ -8,13 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export async function checkIfTableExists(tableName: string): Promise<boolean> {
   try {
-    // Try to make a simple count query to see if the table exists
-    const { count, error } = await supabase
-      .from(tableName as any)
-      .select('*', { count: 'exact', head: true });
-      
-    // If no error, the table exists
-    return !error;
+    return await supabaseWrapper.checkTableExists(tableName);
   } catch (error) {
     console.error('Erro ao verificar tabela:', error);
     return false;
@@ -31,10 +25,5 @@ export async function callRpcFunction<T = any>(
   fnName: string, 
   params: Record<string, unknown> = {}
 ): Promise<{data: T | null, error: any}> {
-  try {
-    const { data, error } = await (supabase.rpc as any)(fnName, params);
-    return { data, error };
-  } catch (error) {
-    return { data: null, error };
-  }
+  return await supabaseWrapper.rpc<T>(fnName, params);
 }
