@@ -29,14 +29,14 @@ export async function loadAppSettings(): Promise<AppSettings> {
       }
       
       if (settingsData) {
-        // Map database fields to AppSettings
+        // Map database fields to AppSettings (snake_case to camelCase)
         const dbSettings: AppSettings = {
-          primaryColor: settingsData.primaryColor || defaultSettings.primaryColor,
-          secondaryColor: settingsData.secondaryColor || defaultSettings.secondaryColor,
-          accentColor: settingsData.accentColor || defaultSettings.accentColor,
+          primaryColor: settingsData.primary_color || defaultSettings.primaryColor,
+          secondaryColor: settingsData.secondary_color || defaultSettings.secondaryColor,
+          accentColor: settingsData.accent_color || defaultSettings.accentColor,
           font: settingsData.font || defaultSettings.font,
-          logoUrl: settingsData.logoUrl || defaultSettings.logoUrl,
-          faviconUrl: settingsData.faviconUrl || defaultSettings.faviconUrl,
+          logoUrl: settingsData.logo_url || defaultSettings.logoUrl,
+          faviconUrl: settingsData.favicon_url || defaultSettings.faviconUrl,
         };
         
         localStorage.setItem('appSettings', JSON.stringify(dbSettings));
@@ -60,13 +60,14 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
     const tableExists = await checkIfTableExists('app_settings');
     
     if (tableExists) {
+      // Map camelCase to snake_case for database
       const updateData: Partial<AppSettingsRow> = {
-        primaryColor: newSettings.primaryColor,
-        secondaryColor: newSettings.secondaryColor,
-        accentColor: newSettings.accentColor,
+        primary_color: newSettings.primaryColor,
+        secondary_color: newSettings.secondaryColor,
+        accent_color: newSettings.accentColor,
         font: newSettings.font,
-        logoUrl: newSettings.logoUrl,
-        faviconUrl: newSettings.faviconUrl
+        logo_url: newSettings.logoUrl,
+        favicon_url: newSettings.faviconUrl
       };
       
       const updateResult = await supabaseWrapper.appSettings.update(updateData);
