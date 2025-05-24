@@ -56,20 +56,22 @@ const Header: React.FC = () => {
           {user ? (
             <Button 
               variant="outline" 
-              className="flex items-center text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
+              size="icon"
+              className="text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
               onClick={() => navigate('/admin/dashboard')}
+              title="Painel Admin"
             >
-              <LogIn className="w-4 h-4 mr-2" />
-              Painel
+              <LogIn className="w-4 h-4" />
             </Button>
           ) : (
             <Button 
               variant="outline" 
-              className="flex items-center text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
+              size="icon"
+              className="text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
               onClick={() => navigate('/login')}
+              title="Login"
             >
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
+              <LogIn className="w-4 h-4" />
             </Button>
           )}
         </div>
