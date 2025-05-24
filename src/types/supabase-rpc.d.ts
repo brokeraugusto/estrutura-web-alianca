@@ -13,18 +13,18 @@ export interface AppSettingsTable {
   faviconUrl?: string | null;
 }
 
-// Use proper module augmentation syntax
+// Use proper module augmentation syntax to extend existing Database
 declare module '@/integrations/supabase/types' {
-  interface Database extends GeneratedDatabase {
-    public: {
-      Tables: {
+  interface Database {
+    public: GeneratedDatabase['public'] & {
+      Tables: GeneratedDatabase['public']['Tables'] & {
         app_settings: {
           Row: AppSettingsTable;
           Insert: Partial<AppSettingsTable>;
           Update: Partial<AppSettingsTable>;
         };
       };
-    }
+    };
   }
 }
 
