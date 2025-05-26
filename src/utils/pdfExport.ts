@@ -15,8 +15,8 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   const doc = new jsPDF();
   
   // Cores da empresa
-  const primaryColor = [21, 57, 87]; // BlueDark
-  const accentColor = [239, 68, 68]; // Orange accent
+  const primaryColor: [number, number, number] = [21, 57, 87]; // BlueDark
+  const accentColor: [number, number, number] = [239, 68, 68]; // Orange accent
   
   // Adicionar logo se disponível
   if (logoUrl) {
@@ -30,7 +30,7 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   
   // Cabeçalho da empresa
   doc.setFontSize(24);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('ALIANÇA ESTRUTURAS', logoUrl ? 70 : 20, 25);
   
   doc.setFontSize(12);
@@ -40,13 +40,13 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   doc.text('www.aliancaestruturas.com.br', logoUrl ? 70 : 20, 47);
   
   // Linha separadora
-  doc.setDrawColor(...accentColor);
+  doc.setDrawColor(accentColor[0], accentColor[1], accentColor[2]);
   doc.setLineWidth(2);
   doc.line(20, 55, 190, 55);
   
   // Título do documento
   doc.setFontSize(18);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('PROPOSTA COMERCIAL', 105, 70, { align: 'center' });
   
   doc.setFontSize(10);
@@ -60,7 +60,7 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   doc.rect(20, 95, 170, 35);
   
   doc.setFontSize(12);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('DADOS DO CLIENTE', 25, 105);
   
   doc.setTextColor(0, 0, 0);
@@ -73,7 +73,7 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   doc.rect(20, 140, 170, 60);
   
   doc.setFontSize(12);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('DETALHES DO PROJETO', 25, 150);
   
   doc.setTextColor(0, 0, 0);
@@ -97,7 +97,7 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   doc.rect(20, 210, 170, 25);
   
   doc.setFontSize(12);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('INFORMAÇÕES COMERCIAIS', 25, 220);
   
   doc.setTextColor(0, 0, 0);
@@ -106,7 +106,7 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   
   if (budgetRequest.estimated_value) {
     doc.setFontSize(12);
-    doc.setTextColor(...accentColor);
+    doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
     doc.text(`Valor Estimado: ${formatCurrency(budgetRequest.estimated_value)}`, 105, 230);
   } else {
     doc.text('Valor: A definir mediante análise técnica', 105, 230);
@@ -122,12 +122,12 @@ export const exportBudgetToPDF = (budgetRequest: BudgetRequest, logoUrl?: string
   doc.text('• Garantia de 12 meses contra defeitos de fabricação.', 20, 278);
   
   // Rodapé
-  doc.setDrawColor(...primaryColor);
+  doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.setLineWidth(1);
   doc.line(20, 285, 190, 285);
   
   doc.setFontSize(8);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('Aliança Estruturas - Soluções em Estruturas Metálicas', 105, 292, { align: 'center' });
   doc.text(`© ${new Date().getFullYear()} - Todos os direitos reservados`, 105, 297, { align: 'center' });
   
@@ -139,8 +139,8 @@ export const exportBudgetListToPDF = (budgetRequests: BudgetRequest[], logoUrl?:
   const doc = new jsPDF();
   
   // Cores da empresa
-  const primaryColor = [21, 57, 87];
-  const accentColor = [239, 68, 68];
+  const primaryColor: [number, number, number] = [21, 57, 87];
+  const accentColor: [number, number, number] = [239, 68, 68];
   
   // Adicionar logo se disponível
   if (logoUrl) {
@@ -153,7 +153,7 @@ export const exportBudgetListToPDF = (budgetRequests: BudgetRequest[], logoUrl?:
   
   // Cabeçalho da empresa
   doc.setFontSize(20);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('ALIANÇA ESTRUTURAS', logoUrl ? 70 : 20, 25);
   
   doc.setFontSize(10);
@@ -161,13 +161,13 @@ export const exportBudgetListToPDF = (budgetRequests: BudgetRequest[], logoUrl?:
   doc.text('contato@aliancaestruturas.com.br | (11) 9999-9999', logoUrl ? 70 : 20, 35);
   
   // Linha separadora
-  doc.setDrawColor(...accentColor);
+  doc.setDrawColor(accentColor[0], accentColor[1], accentColor[2]);
   doc.setLineWidth(2);
   doc.line(20, 45, 190, 45);
   
   // Título do documento
   doc.setFontSize(16);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('RELATÓRIO DE ORÇAMENTOS', 105, 58, { align: 'center' });
   
   doc.setFontSize(10);
@@ -214,12 +214,12 @@ export const exportBudgetListToPDF = (budgetRequests: BudgetRequest[], logoUrl?:
   
   // Rodapé
   const finalY = (doc as any).lastAutoTable.finalY || 200;
-  doc.setDrawColor(...primaryColor);
+  doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.setLineWidth(1);
   doc.line(20, finalY + 15, 190, finalY + 15);
   
   doc.setFontSize(8);
-  doc.setTextColor(...primaryColor);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('Aliança Estruturas - Soluções em Estruturas Metálicas', 105, finalY + 22, { align: 'center' });
   doc.text(`© ${new Date().getFullYear()} - Todos os direitos reservados`, 105, finalY + 27, { align: 'center' });
   
