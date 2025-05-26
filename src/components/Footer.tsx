@@ -1,11 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
-
 const Footer: React.FC = () => {
-  return (
-    <footer className="bg-blueDark text-white py-12">
+  return <footer className="bg-blueDark text-white py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -113,7 +110,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-start">
                 <Phone className="w-5 h-5 mt-1 mr-2 text-orangeAccent" />
-                <span className="text-gray-300">(48) 9 0000-0000</span>
+                <span className="text-gray-300">(48) 9 8819-6062</span>
               </li>
               <li className="flex items-start">
                 <Mail className="w-5 h-5 mt-1 mr-2 text-orangeAccent" />
@@ -132,8 +129,6 @@ const Footer: React.FC = () => {
           <p>© {new Date().getFullYear()} Aliança Estruturas. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
