@@ -10,10 +10,10 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="bg-white w-full min-h-screen font-body">
+    <div className="bg-white w-full min-h-screen font-body overflow-x-hidden">
       <Header />
       <WhatsAppButton />
-      <main className="pt-20">
+      <main className="pt-16 sm:pt-20 w-full">
         {children}
       </main>
       <Footer />

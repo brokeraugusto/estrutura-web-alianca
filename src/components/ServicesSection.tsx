@@ -4,18 +4,23 @@ import ServiceCard from './ServiceCard';
 
 const ServicesSection: React.FC = () => {
   return (
-    <section id="services" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6 text-blueDark">
-            Soluções construtivas modernas e eficientes
-          </h2>
-          <p className="text-lg text-gray-700 mb-8">
-            A Aliança Estruturas é especializada em soluções leves e ágeis para construção
-            civil. Atendemos Garopaba e região com foco em qualidade, agilidade e acabamento
-            impecável para todos os tipos de projetos.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+    <section id="services" className="py-12 sm:py-16 lg:py-20 bg-gray-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-blueDark">
+              Soluções construtivas modernas e eficientes
+            </h2>
+            <p className="text-base sm:text-lg lg:text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+              A Aliança Estruturas é especializada em soluções leves e ágeis para construção
+              civil. Atendemos Garopaba e região com foco em qualidade, agilidade e acabamento
+              impecável para todos os tipos de projetos.
+            </p>
+          </div>
+          
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <ServiceCard
               icon={
                 <svg

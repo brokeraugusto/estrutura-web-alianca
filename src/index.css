@@ -48,11 +48,57 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
   body {
-    @apply font-body;
+    @apply font-body overflow-x-hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-title;
+  }
+
+  /* Prevent horizontal scroll */
+  .container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* Smooth transitions for better UX */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  /* Focus styles for accessibility */
+  button:focus,
+  a:focus {
+    outline: 2px solid #ffa72a;
+    outline-offset: 2px;
   }
 }
