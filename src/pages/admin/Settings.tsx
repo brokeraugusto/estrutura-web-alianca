@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,9 @@ import { useAppSettings } from '@/contexts/AppSettingsContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileDown, Type } from 'lucide-react';
+import { Type } from 'lucide-react';
+import ServiceCategoriesManager from '@/components/admin/settings/ServiceCategoriesManager';
+import UserManager from '@/components/admin/settings/UserManager';
 
 const Settings = () => {
   const { 
@@ -265,25 +266,10 @@ const Settings = () => {
         </TabsContent>
 
         <TabsContent value="advanced">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configurações Avançadas</CardTitle>
-              <CardDescription>
-                Opções avançadas de configuração do sistema
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-gray-500">
-                Configurações avançadas serão implementadas em breve.
-              </p>
-              <div className="space-y-4">
-                <Button variant="outline" className="gap-2">
-                  <FileDown className="h-4 w-4" />
-                  Exportar Dados do Sistema
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid gap-6">
+            <ServiceCategoriesManager />
+            <UserManager />
+          </div>
         </TabsContent>
       </Tabs>
     </DashboardLayout>

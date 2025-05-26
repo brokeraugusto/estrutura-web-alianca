@@ -1,4 +1,3 @@
-
 /**
  * Wrapper personalizado para Supabase que evita conflitos de tipos
  * Esta abordagem isola completamente os tipos gerados do Supabase
@@ -55,6 +54,27 @@ export interface ProfileRow {
   updated_at: string;
 }
 
+// Tipos personalizados para service_categories
+export interface ServiceCategoryRow {
+  id: string;
+  name: string;
+  description?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Tipos personalizados para user_invitations
+export interface UserInvitationRow {
+  id: string;
+  email: string;
+  role: string;
+  invited_by?: string | null;
+  invited_at: string;
+  expires_at: string;
+  accepted: boolean;
+  accepted_at?: string | null;
+}
+
 // Wrapper com métodos tipados
 export const supabaseWrapper = {
   // Método para verificar se tabela existe
@@ -101,6 +121,55 @@ export const supabaseWrapper = {
   profiles: {
     async getById(id: string): Promise<{data: ProfileRow | null, error: any}> {
       return supabaseClient.from('profiles').select('*').eq('id', id).maybeSingle();
+    }
+  },
+
+  // Métodos para service_categories
+  serviceCategories: {
+    async getAll(): Promise<{data: ServiceCategoryRow[] | null, error: any}> {
+      return supabaseClient.from('service_categories').select('*').order('name');
+    },
+    
+    async create(data: Partial<ServiceCategoryRow>): Promise<{data: any, error: any}> {
+      return supabaseClient.from('service_categories').insert([data]);
+    },
+    
+    async update(id: string, data: Partial<ServiceCategoryRow>): Promise<{data: any, error: any}> {
+      return supabaseClient.from('service_categories').update(data).eq('id', id);
+    },
+    
+    async delete(id: string): Promise<{data: any, error: any}> {
+      return supabaseClient.from('service_categories').delete().eq('id', id);
+    }
+  },
+
+  // Métodos para user_invitations
+  userInvitations: {
+    async getAll(): Promise<{data: UserInvitationRow[] | null, error: any}> {
+      return supabaseClient.from('user_invitations').select('*').order('invited_at', { ascending: false });
+    },
+    
+    async create(data: Partial<UserInvitationRow>): Promise<{data: any, error: any}> {
+      return supabaseClient.from('user_invitations').insert([data]);
+    },
+    
+    async delete(id: string): Promise<{data: any, error: any}> {
+      return supabaseClient.from('user_invitations').delete().eq('id', id);
+    }
+  },
+
+  // Métodos para leads
+  leads: {
+    async getAll(): Promise<{data: any[] | null, error: any}> {
+      return supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+    },
+    
+    async create(data: any): Promise<{data: any, error: any}> {
+      return supabaseClient.from('leads').insert([data]);
+    },
+    
+    async update(id: string, data: any): Promise<{data: any, error: any}> {
+      return supabaseClient.from('leads').update(data).eq('id', id);
     }
   },
 

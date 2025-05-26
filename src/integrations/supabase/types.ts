@@ -56,6 +56,7 @@ export type Database = {
           id: string
           project_description: string | null
           project_type: string
+          service_category_id: string | null
           status: string
           updated_at: string
         }
@@ -69,6 +70,7 @@ export type Database = {
           id?: string
           project_description?: string | null
           project_type: string
+          service_category_id?: string | null
           status?: string
           updated_at?: string
         }
@@ -82,10 +84,19 @@ export type Database = {
           id?: string
           project_description?: string | null
           project_type?: string
+          service_category_id?: string | null
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "budget_requests_service_category_id_fkey"
+            columns: ["service_category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leads: {
         Row: {
@@ -96,7 +107,9 @@ export type Database = {
           message: string | null
           name: string
           phone: string | null
+          service_category_id: string | null
           status: string
+          subject: string | null
         }
         Insert: {
           assigned_to?: string | null
@@ -106,7 +119,9 @@ export type Database = {
           message?: string | null
           name: string
           phone?: string | null
+          service_category_id?: string | null
           status?: string
+          subject?: string | null
         }
         Update: {
           assigned_to?: string | null
@@ -116,9 +131,19 @@ export type Database = {
           message?: string | null
           name?: string
           phone?: string | null
+          service_category_id?: string | null
           status?: string
+          subject?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_service_category_id_fkey"
+            columns: ["service_category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -155,6 +180,7 @@ export type Database = {
           id: string
           image_url: string | null
           published: boolean | null
+          service_category_id: string | null
           title: string
           updated_at: string
         }
@@ -165,6 +191,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           published?: boolean | null
+          service_category_id?: string | null
           title: string
           updated_at?: string
         }
@@ -175,8 +202,74 @@ export type Database = {
           id?: string
           image_url?: string | null
           published?: boolean | null
+          service_category_id?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_service_category_id_fkey"
+            columns: ["service_category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_invitations: {
+        Row: {
+          accepted: boolean | null
+          accepted_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          invited_at: string
+          invited_by: string | null
+          role: string
+        }
+        Insert: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          email: string
+          expires_at?: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          role?: string
+        }
+        Update: {
+          accepted?: boolean | null
+          accepted_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          role?: string
         }
         Relationships: []
       }
