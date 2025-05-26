@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,13 +33,30 @@ const UserManager = () => {
 
   const loadData = async () => {
     try {
-      const [invitationsResponse, usersResponse] = await Promise.all([
-        supabaseWrapper.userInvitations.getAll(),
-        supabaseWrapper.rpc('get_all_profiles') // Assumindo que temos uma função RPC para buscar perfis
-      ]);
+      console.log('Loading user data...');
+      
+      // Get invitations
+      const invitationsResponse = await supabaseWrapper.userInvitations.getAll();
+      if (invitationsResponse.error) {
+        console.error('Error loading invitations:', invitationsResponse.error);
+        throw invitationsResponse.error;
+      }
 
-      if (invitationsResponse.error) throw invitationsResponse.error;
-      if (usersResponse.error) throw usersResponse.error;
+      // Get all profiles using direct table query instead of non-existent RPC
+      const usersResponse = await supabaseWrapper.client
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (usersResponse.error) {
+        console.error('Error loading users:', usersResponse.error);
+        throw usersResponse.error;
+      }
+
+      console.log('Successfully loaded data:', {
+        invitations: invitationsResponse.data?.length || 0,
+        users: usersResponse.data?.length || 0
+      });
 
       setInvitations(invitationsResponse.data || []);
       setUsers(usersResponse.data || []);
