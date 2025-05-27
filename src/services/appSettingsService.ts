@@ -36,7 +36,11 @@ export async function loadAppSettings(): Promise<AppSettings> {
           accentColor: settingsData.accent_color || defaultSettings.accentColor,
           font: settingsData.font || defaultSettings.font,
           logoUrl: settingsData.logo_url || defaultSettings.logoUrl,
+          logoLightUrl: settingsData.logo_light_url || defaultSettings.logoLightUrl,
+          logoDarkUrl: settingsData.logo_dark_url || defaultSettings.logoDarkUrl,
           faviconUrl: settingsData.favicon_url || defaultSettings.faviconUrl,
+          whatsappNumber: settingsData.whatsapp_number || defaultSettings.whatsappNumber,
+          whatsappMessage: settingsData.whatsapp_message || defaultSettings.whatsappMessage,
         };
         
         localStorage.setItem('appSettings', JSON.stringify(dbSettings));
@@ -67,7 +71,11 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
         accent_color: newSettings.accentColor,
         font: newSettings.font,
         logo_url: newSettings.logoUrl,
-        favicon_url: newSettings.faviconUrl
+        logo_light_url: newSettings.logoLightUrl,
+        logo_dark_url: newSettings.logoDarkUrl,
+        favicon_url: newSettings.faviconUrl,
+        whatsapp_number: newSettings.whatsappNumber,
+        whatsapp_message: newSettings.whatsappMessage
       };
       
       const updateResult = await supabaseWrapper.appSettings.update(updateData);
@@ -81,10 +89,10 @@ export async function saveAppSettings(newSettings: AppSettings): Promise<boolean
   }
 }
 
-export async function uploadMedia(file: File, folder: 'logos' | 'favicons'): Promise<string | null> {
+export async function uploadMedia(file: File, folder: 'logos' | 'favicons' | 'logos-light' | 'logos-dark'): Promise<string | null> {
   try {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${folder === 'logos' ? 'logo' : 'favicon'}-${Date.now()}.${fileExt}`;
+    const fileName = `${folder.replace('-', '_')}-${Date.now()}.${fileExt}`;
     
     const { error: uploadError } = await supabaseWrapper.storage
       .from('media')
@@ -99,7 +107,7 @@ export async function uploadMedia(file: File, folder: 'logos' | 'favicons'): Pro
     
     return data.publicUrl;
   } catch (error) {
-    console.error(`Erro ao fazer upload do ${folder === 'logos' ? 'logo' : 'favicon'}:`, error);
+    console.error(`Erro ao fazer upload do arquivo:`, error);
     return null;
   }
 }

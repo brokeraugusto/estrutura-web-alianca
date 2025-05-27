@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, User, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 import { Button } from '@/components/ui/button';
+import SmartLogo from './SmartLogo';
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuth();
+  const { settings } = useAppSettings();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,41 +47,77 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className={`bg-white shadow-md fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-3'}`}>
+      <header 
+        className={`bg-white shadow-md fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-3'}`}
+        style={{ borderBottomColor: settings.accentColor }}
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center">
             <div className="flex justify-between items-center w-full max-w-6xl">
               <Link to="/" className="flex items-center flex-shrink-0">
-                <svg className="w-8 h-8 sm:w-10 sm:h-10 mr-2 text-blueDark" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path>
-                </svg>
-                <span className="text-blueDark font-bold text-lg sm:text-xl tracking-tight truncate">
+                <SmartLogo variant="light" className="mr-2" />
+                <span 
+                  className="font-bold text-lg sm:text-xl tracking-tight truncate"
+                  style={{ color: settings.primaryColor }}
+                >
                   Aliança Estruturas
                 </span>
               </Link>
               
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-8">
-                <Link to="/" className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium whitespace-nowrap">
+                <Link 
+                  to="/" 
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
+                  style={{ '--tw-text-opacity': '1' }}
+                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+                  onMouseLeave={(e) => e.target.style.color = ''}
+                >
                   Início
                 </Link>
-                <Link to="/quem-somos" className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium whitespace-nowrap">
+                <Link 
+                  to="/quem-somos" 
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
+                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+                  onMouseLeave={(e) => e.target.style.color = ''}
+                >
                   Quem Somos
                 </Link>
-                <Link to="/servicos" className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium whitespace-nowrap">
+                <Link 
+                  to="/servicos" 
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
+                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+                  onMouseLeave={(e) => e.target.style.color = ''}
+                >
                   Serviços
                 </Link>
-                <Link to="/projetos" className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium whitespace-nowrap">
+                <Link 
+                  to="/projetos" 
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
+                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+                  onMouseLeave={(e) => e.target.style.color = ''}
+                >
                   Projetos
                 </Link>
-                <Link to="/contato" className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium whitespace-nowrap">
+                <Link 
+                  to="/contato" 
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
+                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+                  onMouseLeave={(e) => e.target.style.color = ''}
+                >
                   Contato
                 </Link>
                 
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="text-gray-700 hover:text-orangeAccent hover:bg-transparent flex-shrink-0"
+                  className="text-gray-700 hover:bg-transparent flex-shrink-0"
+                  style={{ 
+                    '--hover-color': settings.accentColor,
+                    color: 'inherit'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = settings.accentColor}
+                  onMouseLeave={(e) => e.currentTarget.style.color = ''}
                   onClick={() => navigate(user ? '/admin/dashboard' : '/login')}
                   title={user ? "Painel Admin" : "Login"}
                 >
@@ -90,7 +129,8 @@ const Header: React.FC = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden text-blueDark hover:bg-gray-100"
+                className="md:hidden hover:bg-gray-100"
+                style={{ color: settings.primaryColor }}
                 onClick={toggleMenu}
                 aria-label="Menu"
               >
@@ -115,7 +155,12 @@ const Header: React.FC = () => {
       }`}>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-4 border-b">
-            <span className="text-blueDark font-bold text-lg">Menu</span>
+            <span 
+              className="font-bold text-lg"
+              style={{ color: settings.primaryColor }}
+            >
+              Menu
+            </span>
             <Button
               variant="ghost"
               size="icon"
@@ -129,35 +174,48 @@ const Header: React.FC = () => {
           <nav className="flex flex-col p-4 space-y-4 flex-1">
             <Link 
               to="/" 
-              className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium py-2 px-3 rounded-lg hover:bg-gray-50"
+              className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
+              style={{ 
+                '--hover-color': settings.accentColor
+              }}
+              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+              onMouseLeave={(e) => e.target.style.color = ''}
               onClick={closeMenu}
             >
               Início
             </Link>
             <Link 
               to="/quem-somos" 
-              className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium py-2 px-3 rounded-lg hover:bg-gray-50"
+              className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
+              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+              onMouseLeave={(e) => e.target.style.color = ''}
               onClick={closeMenu}
             >
               Quem Somos
             </Link>
             <Link 
               to="/servicos" 
-              className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium py-2 px-3 rounded-lg hover:bg-gray-50"
+              className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
+              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+              onMouseLeave={(e) => e.target.style.color = ''}
               onClick={closeMenu}
             >
               Serviços
             </Link>
             <Link 
               to="/projetos" 
-              className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium py-2 px-3 rounded-lg hover:bg-gray-50"
+              className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
+              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+              onMouseLeave={(e) => e.target.style.color = ''}
               onClick={closeMenu}
             >
               Projetos
             </Link>
             <Link 
               to="/contato" 
-              className="text-gray-700 hover:text-orangeAccent transition-colors duration-300 font-medium py-2 px-3 rounded-lg hover:bg-gray-50"
+              className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
+              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
+              onMouseLeave={(e) => e.target.style.color = ''}
               onClick={closeMenu}
             >
               Contato
@@ -166,7 +224,19 @@ const Header: React.FC = () => {
             <div className="border-t pt-4 mt-auto">
               <Button
                 variant="outline"
-                className="w-full justify-start text-blueDark border-blueDark hover:bg-blueDark hover:text-white"
+                className="w-full justify-start transition-all duration-300"
+                style={{ 
+                  borderColor: settings.primaryColor,
+                  color: settings.primaryColor
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = settings.primaryColor;
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                  e.currentTarget.style.color = settings.primaryColor;
+                }}
                 onClick={() => {
                   navigate(user ? '/admin/dashboard' : '/login');
                   closeMenu();

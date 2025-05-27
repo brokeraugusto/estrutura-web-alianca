@@ -24,7 +24,11 @@ export interface AppSettingsRow {
   accent_color: string;
   font: string;
   logo_url?: string | null;
+  logo_light_url?: string | null;
+  logo_dark_url?: string | null;
   favicon_url?: string | null;
+  whatsapp_number?: string | null;
+  whatsapp_message?: string | null;
   created_at: string;
   updated_at: string;
 }

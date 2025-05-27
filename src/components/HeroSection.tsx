@@ -2,15 +2,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
 
 const HeroSection: React.FC = () => {
+  const { settings } = useAppSettings();
+
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services');
     servicesSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section className="relative bg-blueDark text-white overflow-hidden">
+    <section className="relative text-white overflow-hidden" style={{ backgroundColor: settings.primaryColor }}>
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
       
@@ -35,13 +38,24 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
               <Link
                 to="/contato"
-                className="bg-orangeAccent hover:bg-[#ff9000] text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg text-center"
+                className="text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg text-center"
+                style={{ 
+                  backgroundColor: settings.accentColor,
+                  '--hover-bg': `${settings.accentColor}dd`
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${settings.accentColor}dd`}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = settings.accentColor}
               >
                 Solicite um orçamento
               </Link>
               <Link
                 to="/projetos"
-                className="bg-transparent border-2 border-white hover:bg-white hover:text-blueDark text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 text-center"
+                className="bg-transparent border-2 border-white hover:bg-white text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 text-center"
+                style={{ 
+                  '--hover-color': settings.primaryColor
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = settings.primaryColor}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
               >
                 Ver projetos
               </Link>

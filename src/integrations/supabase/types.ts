@@ -16,10 +16,14 @@ export type Database = {
           favicon_url: string | null
           font: string
           id: number
+          logo_dark_url: string | null
+          logo_light_url: string | null
           logo_url: string | null
           primary_color: string
           secondary_color: string
           updated_at: string
+          whatsapp_message: string | null
+          whatsapp_number: string | null
         }
         Insert: {
           accent_color?: string
@@ -27,10 +31,14 @@ export type Database = {
           favicon_url?: string | null
           font?: string
           id?: number
+          logo_dark_url?: string | null
+          logo_light_url?: string | null
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
           updated_at?: string
+          whatsapp_message?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
           accent_color?: string
@@ -38,10 +46,14 @@ export type Database = {
           favicon_url?: string | null
           font?: string
           id?: number
+          logo_dark_url?: string | null
+          logo_light_url?: string | null
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
           updated_at?: string
+          whatsapp_message?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: []
       }

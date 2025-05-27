@@ -5,6 +5,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu, User, LayoutDashboard, FileText, Mail, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSettings } from '@/contexts/AppSettingsContext';
+import SmartLogo from './SmartLogo';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -14,6 +16,7 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }) => {
   const navigate = useNavigate();
   const { signOut, profile } = useAuth();
+  const { settings } = useAppSettings();
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5 mr-2" />, path: '/admin/dashboard' },
@@ -37,10 +40,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
-                <div className="bg-blueDark text-white p-4 flex items-center">
-                  <svg className="w-8 h-8 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path>
-                  </svg>
+                <div 
+                  className="text-white p-4 flex items-center"
+                  style={{ backgroundColor: settings.primaryColor }}
+                >
+                  <SmartLogo variant="dark" className="mr-2" />
                   <span className="font-bold text-lg">Admin</span>
                 </div>
                 <nav className="flex flex-col p-4 space-y-1">
@@ -48,7 +52,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }
                     <Button
                       key={item.name}
                       variant="ghost"
-                      className={`justify-start ${activeTab === item.name.toLowerCase() || (activeTab === 'settings' && item.name === 'Configurações') ? 'bg-gray-100 text-blueDark font-medium' : 'text-gray-700'}`}
+                      className={`justify-start ${
+                        activeTab === item.name.toLowerCase() || 
+                        (activeTab === 'settings' && item.name === 'Configurações') 
+                          ? 'font-medium' 
+                          : 'text-gray-700'
+                      }`}
+                      style={{
+                        backgroundColor: (activeTab === item.name.toLowerCase() || 
+                          (activeTab === 'settings' && item.name === 'Configurações')) 
+                          ? '#f3f4f6' : 'transparent',
+                        color: (activeTab === item.name.toLowerCase() || 
+                          (activeTab === 'settings' && item.name === 'Configurações')) 
+                          ? settings.primaryColor : ''
+                      }}
                       onClick={() => navigate(item.path)}
                     >
                       {item.icon}
@@ -69,10 +86,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }
 
             {/* Logo */}
             <div className="flex items-center min-w-0">
-              <svg className="w-8 h-8 mr-2 text-blueDark flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path>
-              </svg>
-              <span className="text-blueDark font-bold text-lg hidden sm:inline truncate">
+              <SmartLogo variant="light" className="mr-2 flex-shrink-0" />
+              <span 
+                className="font-bold text-lg hidden sm:inline truncate"
+                style={{ color: settings.primaryColor }}
+              >
                 Aliança Estruturas Admin
               </span>
             </div>
@@ -100,7 +118,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }
         <aside className="hidden md:block w-64 border-r border-gray-200 bg-white flex-shrink-0">
           <div className="h-full flex flex-col">
             <div className="py-6 px-4">
-              <h2 className="text-xl font-semibold text-blueDark">Painel Admin</h2>
+              <h2 
+                className="text-xl font-semibold"
+                style={{ color: settings.primaryColor }}
+              >
+                Painel Admin
+              </h2>
               <p className="text-sm text-gray-600 mt-1 truncate">
                 Olá, {profile?.name || 'Usuário'}
               </p>
@@ -110,7 +133,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, activeTab }
                 <Button
                   key={item.name}
                   variant="ghost"
-                  className={`w-full justify-start ${activeTab === item.name.toLowerCase() || (activeTab === 'settings' && item.name === 'Configurações') ? 'bg-gray-100 text-blueDark font-medium' : 'text-gray-700'}`}
+                  className={`w-full justify-start ${
+                    activeTab === item.name.toLowerCase() || 
+                    (activeTab === 'settings' && item.name === 'Configurações') 
+                      ? 'font-medium' 
+                      : 'text-gray-700'
+                  }`}
+                  style={{
+                    backgroundColor: (activeTab === item.name.toLowerCase() || 
+                      (activeTab === 'settings' && item.name === 'Configurações')) 
+                      ? '#f3f4f6' : 'transparent',
+                    color: (activeTab === item.name.toLowerCase() || 
+                      (activeTab === 'settings' && item.name === 'Configurações')) 
+                      ? settings.primaryColor : ''
+                  }}
                   onClick={() => navigate(item.path)}
                 >
                   {item.icon}
