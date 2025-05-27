@@ -1,3 +1,4 @@
+
 /**
  * Wrapper personalizado para Supabase que evita conflitos de tipos
  * Esta abordagem isola completamente os tipos gerados do Supabase
@@ -77,6 +78,19 @@ export interface UserInvitationRow {
   expires_at: string;
   accepted: boolean;
   accepted_at?: string | null;
+}
+
+// Tipos personalizados para projects
+export interface ProjectRow {
+  id: string;
+  title: string;
+  location?: string | null;
+  description?: string | null;
+  category?: string | null;
+  image_url?: string | null;
+  tags?: string[] | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // Wrapper com métodos tipados
@@ -159,6 +173,29 @@ export const supabaseWrapper = {
     
     async delete(id: string): Promise<{data: any, error: any}> {
       return supabaseClient.from('user_invitations').delete().eq('id', id);
+    }
+  },
+
+  // Métodos para projects
+  projects: {
+    async getAll(): Promise<{data: ProjectRow[] | null, error: any}> {
+      return supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+    },
+    
+    async getById(id: string): Promise<{data: ProjectRow | null, error: any}> {
+      return supabaseClient.from('projects').select('*').eq('id', id).maybeSingle();
+    },
+    
+    async create(data: Partial<ProjectRow>): Promise<{data: any, error: any}> {
+      return supabaseClient.from('projects').insert([data]);
+    },
+    
+    async update(id: string, data: Partial<ProjectRow>): Promise<{data: any, error: any}> {
+      return supabaseClient.from('projects').update(data).eq('id', id);
+    },
+    
+    async delete(id: string): Promise<{data: any, error: any}> {
+      return supabaseClient.from('projects').delete().eq('id', id);
     }
   },
 

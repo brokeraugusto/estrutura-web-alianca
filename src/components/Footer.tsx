@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import SmartLogo from './SmartLogo';
 
 const Footer: React.FC = () => {
   return (
@@ -11,9 +12,7 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center mb-4">
-              <svg className="w-8 h-8 sm:w-10 sm:h-10 mr-2 text-orangeAccent flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path>
-              </svg>
+              <SmartLogo variant="dark" className="mr-2" />
               <span className="font-bold text-lg sm:text-xl tracking-tight">Aliança Estruturas</span>
             </div>
             <p className="text-gray-300 mb-4 text-sm sm:text-base leading-relaxed">

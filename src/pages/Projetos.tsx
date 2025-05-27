@@ -4,76 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
-
-interface Project {
-  id: number;
-  title: string;
-  location: string;
-  description: string;
-  category: string;
-  image: string;
-  tags: string[];
-}
+import { Loader2 } from 'lucide-react';
+import { useProjects } from '@/hooks/useProjects';
 
 const Projetos: React.FC = () => {
+  const { projects, loading } = useProjects();
   const [activeFilter, setActiveFilter] = React.useState<string>('todos');
-  
-  const projects: Project[] = [
-    {
-      id: 1,
-      title: 'Residência Moderna',
-      location: 'Garopaba, SC',
-      description: 'Projeto de steel frame com acabamento em drywall e elementos em madeira para uma residência de praia.',
-      category: 'steel-frame',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      tags: ['Residencial', 'Steel Frame', 'Drywall']
-    },
-    {
-      id: 2,
-      title: 'Deck para Restaurante',
-      location: 'Imbituba, SC',
-      description: 'Construção de deck em madeira tratada para área externa de restaurante à beira-mar.',
-      category: 'madeira',
-      image: 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      tags: ['Comercial', 'Deck', 'Madeira']
-    },
-    {
-      id: 3,
-      title: 'Home Office',
-      location: 'Garopaba, SC',
-      description: 'Projeto de home office com divisórias em drywall, nichos e iluminação personalizada.',
-      category: 'drywall',
-      image: 'https://images.unsplash.com/photo-1593476550610-87baa860004a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      tags: ['Comercial', 'Drywall', 'Interiores']
-    },
-    {
-      id: 4,
-      title: 'Chalé de Montanha',
-      location: 'Serra Catarinense',
-      description: 'Construção de chalé em estrutura mista de madeira e steel frame com isolamento térmico.',
-      category: 'madeira',
-      image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      tags: ['Residencial', 'Madeira', 'Steel Frame']
-    },
-    {
-      id: 5,
-      title: 'Loft Moderno',
-      location: 'Florianópolis, SC',
-      description: 'Reforma completa com drywall para criação de loft estilo industrial.',
-      category: 'drywall',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      tags: ['Residencial', 'Drywall', 'Reforma']
-    },
-    {
-      id: 6,
-      title: 'Casa de Praia',
-      location: 'Garopaba, SC',
-      description: 'Construção residencial em steel frame com acabamentos modernos e sustentáveis.',
-      category: 'steel-frame',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      tags: ['Residencial', 'Steel Frame']
-    }
-  ];
 
   const categories = [
     { id: 'todos', label: 'Todos os Projetos' },
@@ -85,6 +21,29 @@ const Projetos: React.FC = () => {
   const filteredProjects = activeFilter === 'todos' 
     ? projects 
     : projects.filter(project => project.category === activeFilter);
+
+  const getCategoryLabel = (category?: string) => {
+    switch (category) {
+      case 'steel-frame':
+        return 'Steel Frame';
+      case 'drywall':
+        return 'Drywall';
+      case 'madeira':
+        return 'Madeira';
+      default:
+        return category || 'Sem categoria';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-blueDark" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -108,37 +67,66 @@ const Projetos: React.FC = () => {
       </div>
 
       {/* Projetos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        {filteredProjects.map((project) => (
-          <div key={project.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-            <div className="w-full h-64">
-              <AspectRatio ratio={4/3}>
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover"
-                />
-              </AspectRatio>
-            </div>
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-semibold text-blueDark">{project.title}</h3>
-                <Badge variant="secondary" className="bg-gray-100 text-gray-700">
-                  {project.location}
-                </Badge>
+      {filteredProjects.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">Nenhum projeto encontrado</p>
+          <p className="text-gray-400 mt-2">
+            {activeFilter === 'todos' 
+              ? 'Ainda não há projetos cadastrados'
+              : 'Não há projetos nesta categoria'
+            }
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {filteredProjects.map((project) => (
+            <div key={project.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+              <div className="w-full h-64">
+                <AspectRatio ratio={4/3}>
+                  {project.image_url ? (
+                    <img 
+                      src={project.image_url} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500">Sem imagem</span>
+                    </div>
+                  )}
+                </AspectRatio>
               </div>
-              <p className="text-gray-600 mb-4">{project.description}</p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.tags.map((tag, index) => (
-                  <Badge key={index} className="bg-orangeAccent/10 text-orangeAccent">
-                    {tag}
-                  </Badge>
-                ))}
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-semibold text-blueDark">{project.title}</h3>
+                  {project.location && (
+                    <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+                      {project.location}
+                    </Badge>
+                  )}
+                </div>
+                
+                {project.description && (
+                  <p className="text-gray-600 mb-4">{project.description}</p>
+                )}
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.category && (
+                    <Badge className="bg-blueDark/10 text-blueDark">
+                      {getCategoryLabel(project.category)}
+                    </Badge>
+                  )}
+                  {project.tags && project.tags.map((tag, index) => (
+                    <Badge key={index} className="bg-orangeAccent/10 text-orangeAccent">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Convite para novos projetos */}
       <div className="max-w-3xl mx-auto bg-gradient-to-r from-blueDark to-[#0f2435] p-8 rounded-lg text-center text-white">
