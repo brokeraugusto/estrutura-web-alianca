@@ -38,24 +38,25 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
               <Link
                 to="/contato"
-                className="text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg text-center"
-                style={{ 
-                  backgroundColor: settings.accentColor,
-                  '--hover-bg': `${settings.accentColor}dd`
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${settings.accentColor}dd`}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = settings.accentColor}
+                className="text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg text-center hover:opacity-90"
+                style={{ backgroundColor: settings.accentColor }}
               >
                 Solicite um orçamento
               </Link>
               <Link
                 to="/projetos"
-                className="bg-transparent border-2 border-white hover:bg-white text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 text-center"
+                className="bg-transparent border-2 border-white hover:bg-white text-white hover:text-current py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 text-center"
                 style={{ 
-                  '--hover-color': settings.primaryColor
+                  '--hover-text-color': settings.primaryColor
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  const target = e.currentTarget as HTMLElement;
+                  target.style.color = settings.primaryColor;
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = settings.primaryColor}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                onMouseLeave={(e) => {
+                  const target = e.currentTarget as HTMLElement;
+                  target.style.color = 'white';
+                }}
               >
                 Ver projetos
               </Link>

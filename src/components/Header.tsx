@@ -68,42 +68,71 @@ const Header: React.FC = () => {
               <nav className="hidden md:flex items-center space-x-8">
                 <Link 
                   to="/" 
-                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
-                  style={{ '--tw-text-opacity': '1' }}
-                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-                  onMouseLeave={(e) => e.target.style.color = ''}
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap"
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = settings.accentColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = '';
+                  }}
                 >
                   Início
                 </Link>
                 <Link 
                   to="/quem-somos" 
-                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
-                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-                  onMouseLeave={(e) => e.target.style.color = ''}
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap"
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = settings.accentColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = '';
+                  }}
                 >
                   Quem Somos
                 </Link>
                 <Link 
                   to="/servicos" 
-                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
-                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-                  onMouseLeave={(e) => e.target.style.color = ''}
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap"
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = settings.accentColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = '';
+                  }}
                 >
                   Serviços
                 </Link>
                 <Link 
                   to="/projetos" 
-                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
-                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-                  onMouseLeave={(e) => e.target.style.color = ''}
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap"
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = settings.accentColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = '';
+                  }}
                 >
                   Projetos
                 </Link>
                 <Link 
                   to="/contato" 
-                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap hover:text-current"
-                  onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-                  onMouseLeave={(e) => e.target.style.color = ''}
+                  className="text-gray-700 transition-colors duration-300 font-medium whitespace-nowrap"
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = settings.accentColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = '';
+                  }}
                 >
                   Contato
                 </Link>
@@ -112,12 +141,14 @@ const Header: React.FC = () => {
                   variant="ghost" 
                   size="icon"
                   className="text-gray-700 hover:bg-transparent flex-shrink-0"
-                  style={{ 
-                    '--hover-color': settings.accentColor,
-                    color: 'inherit'
+                  onMouseEnter={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = settings.accentColor;
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = settings.accentColor}
-                  onMouseLeave={(e) => e.currentTarget.style.color = ''}
+                  onMouseLeave={(e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    target.style.color = '';
+                  }}
                   onClick={() => navigate(user ? '/admin/dashboard' : '/login')}
                   title={user ? "Painel Admin" : "Login"}
                 >
@@ -175,11 +206,14 @@ const Header: React.FC = () => {
             <Link 
               to="/" 
               className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
-              style={{ 
-                '--hover-color': settings.accentColor
+              onMouseEnter={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = settings.accentColor;
               }}
-              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-              onMouseLeave={(e) => e.target.style.color = ''}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = '';
+              }}
               onClick={closeMenu}
             >
               Início
@@ -187,8 +221,14 @@ const Header: React.FC = () => {
             <Link 
               to="/quem-somos" 
               className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
-              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-              onMouseLeave={(e) => e.target.style.color = ''}
+              onMouseEnter={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = settings.accentColor;
+              }}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = '';
+              }}
               onClick={closeMenu}
             >
               Quem Somos
@@ -196,8 +236,14 @@ const Header: React.FC = () => {
             <Link 
               to="/servicos" 
               className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
-              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-              onMouseLeave={(e) => e.target.style.color = ''}
+              onMouseEnter={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = settings.accentColor;
+              }}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = '';
+              }}
               onClick={closeMenu}
             >
               Serviços
@@ -205,8 +251,14 @@ const Header: React.FC = () => {
             <Link 
               to="/projetos" 
               className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
-              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-              onMouseLeave={(e) => e.target.style.color = ''}
+              onMouseEnter={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = settings.accentColor;
+              }}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = '';
+              }}
               onClick={closeMenu}
             >
               Projetos
@@ -214,8 +266,14 @@ const Header: React.FC = () => {
             <Link 
               to="/contato" 
               className="text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300"
-              onMouseEnter={(e) => e.target.style.color = settings.accentColor}
-              onMouseLeave={(e) => e.target.style.color = ''}
+              onMouseEnter={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = settings.accentColor;
+              }}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget as HTMLElement;
+                target.style.color = '';
+              }}
               onClick={closeMenu}
             >
               Contato
@@ -230,12 +288,14 @@ const Header: React.FC = () => {
                   color: settings.primaryColor
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = settings.primaryColor;
-                  e.currentTarget.style.color = 'white';
+                  const target = e.currentTarget as HTMLElement;
+                  target.style.backgroundColor = settings.primaryColor;
+                  target.style.color = 'white';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '';
-                  e.currentTarget.style.color = settings.primaryColor;
+                  const target = e.currentTarget as HTMLElement;
+                  target.style.backgroundColor = '';
+                  target.style.color = settings.primaryColor;
                 }}
                 onClick={() => {
                   navigate(user ? '/admin/dashboard' : '/login');
