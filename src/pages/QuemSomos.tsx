@@ -1,11 +1,8 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
 const QuemSomos: React.FC = () => {
-  return (
-    <div className="container mx-auto px-4 py-16">
+  return <div className="container mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-blueDark mb-8 text-center">Quem Somos</h1>
       
       {/* História da empresa */}
@@ -26,11 +23,7 @@ const QuemSomos: React.FC = () => {
               </p>
             </div>
             <div className="md:w-1/2">
-              <img 
-                src="https://images.unsplash.com/photo-1581092630645-1f3b2c97a8a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                alt="Equipe Aliança Estruturas" 
-                className="rounded-lg w-full h-64 object-cover shadow-md"
-              />
+              <img alt="Equipe Aliança Estruturas" className="rounded-lg w-full h-64 object-cover shadow-md" src="/lovable-uploads/d6f2b3ee-e4d4-4999-8a5e-d4c75ee6860e.jpg" />
             </div>
           </div>
         </div>
@@ -80,33 +73,23 @@ const QuemSomos: React.FC = () => {
       <div className="max-w-4xl mx-auto mb-16">
         <h2 className="text-2xl font-semibold mb-8 text-blueDark text-center">Nossa Equipe</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            {
-              name: "Carlos Silva",
-              role: "Diretor Técnico",
-              image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
-            },
-            {
-              name: "Ana Oliveira",
-              role: "Arquiteta",
-              image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
-            },
-            {
-              name: "Pedro Santos",
-              role: "Engenheiro Civil",
-              image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
-            }
-          ].map((member, index) => (
-            <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center">
-              <img 
-                src={member.image} 
-                alt={member.name} 
-                className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-              />
+          {[{
+          name: "Carlos Silva",
+          role: "Diretor Técnico",
+          image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        }, {
+          name: "Ana Oliveira",
+          role: "Arquiteta",
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        }, {
+          name: "Pedro Santos",
+          role: "Engenheiro Civil",
+          image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        }].map((member, index) => <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center">
+              <img src={member.image} alt={member.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
               <h3 className="text-lg font-semibold text-blueDark">{member.name}</h3>
               <p className="text-gray-600">{member.role}</p>
-            </div>
-          ))}
+            </div>)}
         </div>
       </div>
 
@@ -122,8 +105,6 @@ const QuemSomos: React.FC = () => {
           </Button>
         </Link>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default QuemSomos;
