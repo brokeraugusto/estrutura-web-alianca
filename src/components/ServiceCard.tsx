@@ -17,7 +17,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       </div>
       <h3 className="text-xl font-semibold mb-3 text-blueDark">{title}</h3>
       <p className="text-gray-600 mb-4">{description}</p>
-      <Link to="/servicos" className="text-orangeAccent font-medium hover:text-[#ff9000] flex items-center justify-center">
+      <Link to="/servicos" className="text-amber-500 font-medium hover:text-[#ff9000] flex items-center justify-center">
         Saiba mais
         <ChevronRight className="w-4 h-4 ml-1" />
       </Link>
