@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
 
           {/* Navigation */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-orangeAccent">Navegação</h3>
+            <h3 className="text-lg font-semibold mb-4 text-amber-500">Navegação</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-300 hover:text-orangeAccent transition-colors duration-300 text-sm sm:text-base">
