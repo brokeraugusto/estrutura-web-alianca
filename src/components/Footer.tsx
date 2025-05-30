@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import SmartLogo from './SmartLogo';
 const Footer: React.FC = () => {
-  return <footer className="bg-blueDark text-white py-8 sm:py-12">
+  return <footer className="text-white py-8 sm:py-12 bg-sky-950">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Company Info */}
