@@ -27,7 +27,7 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 bg bg-blue-950/85">
         <div className="min-h-[80vh] sm:min-h-[85vh] flex items-center">
           <div className="w-full max-w-4xl mx-auto text-center sm:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight lg:text-6xl text-slate-600">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight lg:text-6xl text-white">
               Tecnologia e eficiência em cada estrutura
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90 max-w-3xl mx-auto sm:mx-0">
