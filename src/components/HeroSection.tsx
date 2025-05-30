@@ -17,11 +17,11 @@ const HeroSection: React.FC = () => {
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
       
-      {/* Background image */}
+      {/* Background image - Construction/coastal theme for Garopaba */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzkyNDZ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdHxlbnwwfHx8fDE3NDc3NjM2MzR8MA&ixlib=rb-4.1.0&q=80&w=1080')",
+          backgroundImage: "url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80')",
         }}
       ></div>
       
