@@ -36,7 +36,7 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
               <Link to="/contato" style={{
               backgroundColor: settings.accentColor
-            }} className="bg-amber-500 text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg text-center hover:opacity-90 bg-amber-500 ">
+            }} className="bg-amber-500 text-white py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg text-center hover:opacity-90">
                 Solicite um orçamento
               </Link>
               <Link to="/projetos" className="bg-transparent border-2 border-white hover:bg-white text-white hover:text-current py-3 px-6 sm:px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 text-center" style={{
