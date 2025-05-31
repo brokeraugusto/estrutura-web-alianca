@@ -19,12 +19,12 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 bg-black opacity-40"></div>
       
       {/* Background image - Construction/coastal theme for Garopaba */}
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
+      <div style={{
       backgroundImage: "url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80')"
-    }}></div>
+    }} className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-blue-950/85"></div>
       
       {/* Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 bg bg-blue-950/85">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 bg">
         <div className="min-h-[80vh] sm:min-h-[85vh] flex items-center">
           <div className="w-full max-w-4xl mx-auto text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight lg:text-6xl text-white">
