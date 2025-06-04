@@ -7,13 +7,13 @@ const CtaSection: React.FC = () => {
   } = useAppSettings();
   return <section style={{
     background: `linear-gradient(to right, ${settings.primaryColor}, ${settings.primaryColor}dd)`
-  }} className="py-12 sm:py-16 lg:py-20 bg-blue-900/95">
+  }} className="py-12 sm:py-16 lg:py-20 bg-slate-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto text-center text-white">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-blue-950">
             Transforme seu projeto em realidade
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl mb-6 sm:mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl mb-6 sm:mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed text-blue-950">
             Estamos prontos para tornar sua ideia em um projeto executável com agilidade,
             qualidade e acabamento impecável.
           </p>
