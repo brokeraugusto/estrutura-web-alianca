@@ -7,7 +7,7 @@ const CtaSection: React.FC = () => {
   } = useAppSettings();
   return <section style={{
     background: `linear-gradient(to right, ${settings.primaryColor}, ${settings.primaryColor}dd)`
-  }} className="py-12 sm:py-16 lg:py-20 bg-blue-900">
+  }} className="py-12 sm:py-16 lg:py-20 bg-blue-900/95">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto text-center text-white">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6">
