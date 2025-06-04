@@ -139,14 +139,7 @@ const Contato: React.FC = () => {
         </div>
 
         {/* Mapa */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-semibold mb-6 text-blueDark text-center">Nossa Localização</h2>
-          <div className="w-full h-96 bg-gray-200 rounded-lg overflow-hidden shadow-md">
-            <div className="w-full h-full flex items-center justify-center text-gray-500">
-              <p>Mapa de localização seria exibido aqui</p>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>;
 };
