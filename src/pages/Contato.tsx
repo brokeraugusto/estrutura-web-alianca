@@ -1,11 +1,13 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { usePhoneMask } from '@/hooks/usePhoneMask';
 
 const Contato: React.FC = () => {
+  const phoneMask = usePhoneMask();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Aqui seria implementado o envio do formulário
@@ -133,6 +135,8 @@ const Contato: React.FC = () => {
                     id="phone"
                     type="tel"
                     placeholder="(XX) X XXXX-XXXX"
+                    value={phoneMask.value}
+                    onChange={phoneMask.onChange}
                     className="w-full"
                   />
                 </div>
@@ -178,7 +182,6 @@ const Contato: React.FC = () => {
         <div className="mt-16">
           <h2 className="text-2xl font-semibold mb-6 text-blueDark text-center">Nossa Localização</h2>
           <div className="w-full h-96 bg-gray-200 rounded-lg overflow-hidden shadow-md">
-            {/* Aqui seria inserido um iframe de mapa real */}
             <div className="w-full h-full flex items-center justify-center text-gray-500">
               <p>Mapa de localização seria exibido aqui</p>
             </div>
