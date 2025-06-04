@@ -8,14 +8,10 @@ const QuemSomos: React.FC = () => {
       {/* História da empresa */}
       <div className="max-w-4xl mx-auto mb-16">
         <div className="bg-white p-8 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-blueDark">Fundada em 2023, a Aliança Estruturas nasceu da paixão por construções eficientes e sustentáveis. Nosso time de profissionais qualificados se especializou em técnicas construtivas modernas que combinam rapidez, qualidade e baixo impacto ambiental.</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-blueDark">Fundada em 2024, a Aliança Estruturas nasceu da paixão por construções eficientes e sustentáveis. Nosso time de profissionais qualificados se especializou em técnicas construtivas modernas que combinam rapidez, qualidade e baixo impacto ambiental.</h2>
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="md:w-1/2">
-              <p className="text-gray-700 mb-4">
-                Fundada em 2015, a Aliança Estruturas nasceu da paixão por construções eficientes e 
-                sustentáveis. Nosso time de profissionais qualificados se especializou em técnicas 
-                construtivas modernas que combinam rapidez, qualidade e baixo impacto ambiental.
-              </p>
+              <p className="text-gray-700 mb-4">Fundada em 2024, a Aliança Estruturas nasceu da paixão por construções eficientes e sustentáveis. Nosso time de profissionais qualificados se especializou em técnicas construtivas modernas que combinam rapidez, qualidade e baixo impacto ambiental.</p>
               <p className="text-gray-700">
                 Atuando em Garopaba e região, nos destacamos por oferecer soluções construtivas 
                 que atendem às necessidades específicas do clima litorâneo, com foco em durabilidade
