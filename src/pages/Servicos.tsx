@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+
 const Servicos: React.FC = () => {
   const services = [{
     id: 'drywall',
@@ -14,7 +15,7 @@ const Servicos: React.FC = () => {
     title: 'Steel Frame',
     description: 'Estruturas em steel frame para construções completas ou modulares. Sistema construtivo ágil, durável e resistente à umidade, ideal para o clima litorâneo.',
     features: ['Construções completas', 'Ampliações e módulos', 'Estruturas para coberturas', 'Revestimentos externos', 'Projetos personalizados'],
-    image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   }, {
     id: 'madeira',
     title: 'Projetos em Madeira',
@@ -22,7 +23,8 @@ const Servicos: React.FC = () => {
     features: ['Decks para áreas externas', 'Pergolados e coberturas', 'Chalés e cabanas', 'Estruturas para telhados', 'Revestimentos em madeira'],
     image: 'https://images.unsplash.com/photo-1501127122-f385ca6ddd9d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
   }];
-  return <div className="container mx-auto px-4 py-16">
+  return (
+    <div className="container mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-blueDark mb-8 text-center">Nossos Serviços</h1>
       
       {/* Intro */}
@@ -35,7 +37,8 @@ const Servicos: React.FC = () => {
 
       {/* Serviços Detalhados */}
       <div className="space-y-24 mb-16">
-        {services.map((service, index) => <div key={service.id} className="max-w-5xl mx-auto">
+        {services.map((service, index) => (
+          <div key={service.id} className="max-w-5xl mx-auto">
             <div className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 items-center`}>
               <div className="md:w-1/2">
                 <img src={service.image} alt={service.title} className="rounded-lg w-full h-80 object-cover shadow-lg" />
@@ -46,10 +49,12 @@ const Servicos: React.FC = () => {
                 
                 <h3 className="text-lg font-medium mb-3 text-blueDark">O que oferecemos:</h3>
                 <ul className="space-y-2 mb-6">
-                  {service.features.map((feature, idx) => <li key={idx} className="flex items-start">
+                  {service.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start">
                       <ChevronRight className="w-5 h-5 text-orangeAccent mr-2 mt-0.5" />
                       <span className="text-gray-700">{feature}</span>
-                    </li>)}
+                    </li>
+                  ))}
                 </ul>
                 
                 <Link to="/contato">
@@ -59,7 +64,8 @@ const Servicos: React.FC = () => {
                 </Link>
               </div>
             </div>
-          </div>)}
+          </div>
+        ))}
       </div>
 
       {/* Metodologia de Trabalho */}
@@ -91,13 +97,15 @@ const Servicos: React.FC = () => {
           icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-        }].map((step, index) => <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-              <div className="w-16 h-16 bg-blueDark text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                {step.icon}
-              </div>
-              <h3 className="text-lg font-semibold mb-2 text-blueDark">{step.title}</h3>
-              <p className="text-gray-600 text-sm">{step.description}</p>
-            </div>)}
+        }].map((step, index) => (
+          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+            <div className="w-16 h-16 bg-blueDark text-white rounded-full flex items-center justify-center mx-auto mb-4">
+              {step.icon}
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-blueDark">{step.title}</h3>
+            <p className="text-gray-600 text-sm">{step.description}</p>
+          </div>
+        ))}
         </div>
       </div>
 
@@ -113,6 +121,8 @@ const Servicos: React.FC = () => {
           </Button>
         </Link>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Servicos;
