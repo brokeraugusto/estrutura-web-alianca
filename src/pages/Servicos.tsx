@@ -15,7 +15,7 @@ const Servicos: React.FC = () => {
     title: 'Steel Frame',
     description: 'Estruturas em steel frame para construções completas ou modulares. Sistema construtivo ágil, durável e resistente à umidade, ideal para o clima litorâneo.',
     features: ['Construções completas', 'Ampliações e módulos', 'Estruturas para coberturas', 'Revestimentos externos', 'Projetos personalizados'],
-    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    image: 'https://www.3tc.com.br/wp-content/uploads/2023/03/steel-frame-2-2-751x563.jpg'
   }, {
     id: 'madeira',
     title: 'Projetos em Madeira',
