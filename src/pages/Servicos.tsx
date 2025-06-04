@@ -21,7 +21,7 @@ const Servicos: React.FC = () => {
     title: 'Projetos em Madeira',
     description: 'Decks, pergolados, chalés e coberturas em madeira tratada com acabamento de primeira qualidade. Soluções personalizadas que agregam beleza e funcionalidade.',
     features: ['Decks para áreas externas', 'Pergolados e coberturas', 'Chalés e cabanas', 'Estruturas para telhados', 'Revestimentos em madeira'],
-    image: 'https://images.unsplash.com/photo-1501127122-f385ca6ddd9d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+    image: 'https://allmadloja.com.br/wp-content/uploads/2022/11/pergolado-de-madeira-1.webp'
   }];
   return (
     <div className="container mx-auto px-4 py-16">
