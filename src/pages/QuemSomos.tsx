@@ -66,7 +66,28 @@ const QuemSomos: React.FC = () => {
       </div>
 
       {/* Equipe */}
-      
+      <div className="max-w-4xl mx-auto mb-16">
+        <h2 className="text-2xl font-semibold mb-8 text-blueDark text-center">Nossa Equipe</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[{
+          name: "Carlos Silva",
+          role: "Diretor Técnico",
+          image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        }, {
+          name: "Ana Oliveira",
+          role: "Arquiteta",
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        }, {
+          name: "Pedro Santos",
+          role: "Engenheiro Civil",
+          image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        }].map((member, index) => <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center">
+              <img src={member.image} alt={member.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
+              <h3 className="text-lg font-semibold text-blueDark">{member.name}</h3>
+              <p className="text-gray-600">{member.role}</p>
+            </div>)}
+        </div>
+      </div>
 
       {/* CTA */}
       <div className="max-w-3xl mx-auto text-center">
@@ -75,7 +96,7 @@ const QuemSomos: React.FC = () => {
           Entre em contato conosco para uma consulta gratuita e descubra como podemos ajudar a realizar seu projeto.
         </p>
         <Link to="/contato">
-          <Button className="bg-orangeAccent hover:bg-[#ff9000] text-white px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg py-0">
+          <Button className="bg-orangeAccent hover:bg-[#ff9000] text-white py-3 px-8 rounded-lg text-lg font-semibold inline-block transition-all duration-300 hover:scale-105 shadow-lg">
             Fale Conosco
           </Button>
         </Link>
